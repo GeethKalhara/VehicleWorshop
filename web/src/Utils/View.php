@@ -29,7 +29,7 @@ final class View
         $path = getenv('VIEW_PATH');
 
         if ($path === false || $path === '') {
-            $path = 'web/resources/views';
+            throw new WebError('VIEW_PATH is not set');
         }
 
         $dir = realpath(__DIR__ . '/../../../' . $path);
