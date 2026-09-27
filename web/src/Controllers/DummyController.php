@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Vwork\Web\Controllers;
 
+use Vwork\Web\Http\Headers\HttpHeaders;
 use Vwork\Web\Http\Request;
 use Vwork\Web\Http\Response;
 
@@ -20,5 +21,12 @@ final class DummyController extends ControllerBase
     public function hello(Request $req, array $attr): Response
     {
         return Response::text('Hello');
+    }
+
+    /** @param array<string, mixed> $attr */
+    #[ControllerAction]
+    public function login(Request $req, array $attr): Response
+    {
+        return $this->payload(['message' => 'Hi']);
     }
 }

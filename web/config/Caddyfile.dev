@@ -5,7 +5,7 @@
 :80 {
 	route {
 		@assets {
-			path /app/web/public/assets/*
+			path /assets/*
 		}
 
 		file_server @assets {

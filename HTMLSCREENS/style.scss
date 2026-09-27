@@ -1,0 +1,1294 @@
+// ==========================================================================
+// VWMS - Customer Portal Registration Stylesheet (SCSS)
+// Architecture: BEM & Modern Flexbox Centering Logic
+// ==========================================================================
+
+// 1. Design Tokens
+$color-primary: #F05A28;
+$color-primary-hover: #D94819;
+$color-primary-light: #FFF5F1;
+$color-primary-border: #FFD4C2;
+
+$color-text-title: #111827;
+$color-text-body: #374151;
+$color-text-muted: #6B7280;
+$color-text-subtle: #9CA3AF;
+
+$color-bg-page: #FFFFFF;
+$color-card-bg: #FFFFFF;
+$color-input-border: #E5E7EB;
+$color-input-border-hover: #D1D5DB;
+$color-input-focus: #F05A28;
+$color-input-focus-ring: rgba(240, 90, 40, 0.14);
+$color-footer-border: #F3F4F6;
+$color-danger: #EF4444;
+$color-danger-bg: #FEF2F2;
+
+$font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-full: 9999px;
+$transition: 150ms ease-in-out;
+
+// 2. Global Reset & Modern App Wrapper
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100%;
+}
+
+body.auth-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; // Sticky header & footer with centered content
+    background-color: $color-bg-page;
+    color: $color-text-body;
+    font-family: $font-family;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+// Hide unwanted debug/profiler floating overlays
+[class*="debug"], [id*="debug"], [class*="profiler"], [class*="memory"], .sf-toolbar {
+    display: none !important;
+}
+
+// 3. Header Component
+.auth-header {
+    width: 100%;
+    background-color: transparent;
+    position: relative;
+    z-index: 10;
+
+    &__container {
+        width: 100%;
+        padding: 1.25rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    &__logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        text-decoration: none;
+    }
+
+    &__logo-icon {
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    }
+
+    &__logo-text {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: $color-text-title;
+        letter-spacing: -0.03em;
+    }
+
+    &__support-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: $color-text-muted;
+        transition: color $transition;
+
+        &:hover {
+            color: $color-text-title;
+
+            .auth-header__chevron {
+                transform: translateX(2px);
+            }
+        }
+    }
+
+    &__chevron {
+        transition: transform $transition;
+        stroke: currentColor;
+    }
+}
+
+// 4. Main & Centered Form Card
+.auth-main {
+    flex: 1;
+    display: flex;
+    align-items: center;     // Vertical centering
+    justify-content: center; // Horizontal centering
+    width: 100%;
+    padding: 1.5rem 1.25rem;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto;
+
+    &__badge-wrap {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1rem;
+    }
+
+    &__header {
+        text-align: center;
+        margin-bottom: 1.75rem;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: $color-text-title;
+        letter-spacing: -0.025em;
+        line-height: 1.25;
+        margin-bottom: 0.5rem;
+    }
+
+    &__subtitle {
+        font-size: 0.8125rem;
+        color: $color-text-muted;
+        line-height: 1.45;
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    &__footer {
+        margin-top: 1.5rem;
+        text-align: center;
+        font-size: 0.8125rem;
+    }
+
+    &__footer-text {
+        color: $color-text-muted;
+    }
+
+    &__footer-link {
+        color: $color-primary;
+        font-weight: 600;
+        margin-left: 0.25rem;
+        transition: color $transition;
+
+        &:hover {
+            color: $color-primary-hover;
+            text-decoration: underline;
+        }
+    }
+}
+
+// 5. Badge Component
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: $radius-full;
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1;
+
+    &--portal {
+        background-color: $color-primary-light;
+        color: $color-primary;
+    }
+
+    &__indicator {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: $color-primary;
+        display: inline-block;
+    }
+}
+
+// 6. Form & Inputs
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.05rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &__label {
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: $color-text-title;
+        letter-spacing: -0.01em;
+    }
+
+    &__hint {
+        font-size: 0.75rem;
+        color: $color-text-subtle;
+        margin-top: 0.15rem;
+    }
+
+    &__error {
+        font-size: 0.75rem;
+        color: $color-danger;
+        margin-top: 0.25rem;
+    }
+
+    &--invalid {
+        .form-input {
+            border-color: $color-danger;
+
+            &:focus-within {
+                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+            }
+        }
+    }
+}
+
+.form-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 42px;
+    background-color: #FFFFFF;
+    border: 1px solid $color-input-border;
+    border-radius: $radius-md;
+    transition: border-color $transition, box-shadow $transition;
+
+    &:hover {
+        border-color: $color-input-border-hover;
+    }
+
+    &:focus-within {
+        border-color: $color-input-focus;
+        box-shadow: 0 0 0 3px $color-input-focus-ring;
+    }
+
+    &__icon-left {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding-left: 0.75rem;
+        color: $color-text-subtle;
+        pointer-events: none;
+        flex-shrink: 0;
+    }
+
+    &__control {
+        width: 100%;
+        height: 100%;
+        padding: 0 0.75rem 0 0.55rem;
+        border: none;
+        background: transparent;
+        font-family: inherit;
+        font-size: 0.85rem;
+        color: $color-text-title;
+        outline: none;
+
+        &::placeholder {
+            color: $color-text-subtle;
+            opacity: 1;
+            font-size: 0.85rem;
+        }
+
+        &::-webkit-input-placeholder {
+            color: $color-text-subtle;
+            font-size: 0.85rem;
+        }
+
+        &::-moz-placeholder {
+            color: $color-text-subtle;
+            opacity: 1;
+            font-size: 0.85rem;
+        }
+
+        &:-ms-input-placeholder {
+            color: $color-text-subtle;
+            font-size: 0.85rem;
+        }
+    }
+
+    &__toggle-password {
+        background: none;
+        border: none;
+        padding: 0 0.75rem;
+        color: $color-text-subtle;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color $transition;
+        height: 100%;
+
+        &:hover {
+            color: $color-text-body;
+        }
+    }
+}
+
+// 7. Checkbox
+.form-checkbox {
+    margin: 0.15rem 0;
+
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.55rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    &__input {
+        position: absolute;
+        opacity: 0;
+        cursor: pointer;
+        height: 0;
+        width: 0;
+
+        &:checked + .form-checkbox__box {
+            background-color: $color-primary;
+            border-color: $color-primary;
+
+            svg {
+                display: block;
+            }
+        }
+
+        &:focus + .form-checkbox__box {
+            box-shadow: 0 0 0 3px $color-input-focus-ring;
+        }
+    }
+
+    &__box {
+        width: 16px;
+        height: 16px;
+        border: 1.5px solid $color-input-border-hover;
+        border-radius: $radius-sm;
+        background-color: #FFFFFF;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all $transition;
+        flex-shrink: 0;
+
+        svg {
+            display: none;
+        }
+    }
+
+    &__text {
+        font-size: 0.78rem;
+        color: $color-text-muted;
+        line-height: 1.4;
+    }
+
+    &__link {
+        color: $color-text-title;
+        font-weight: 600;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+.form-row-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0.15rem 0 0.35rem;
+    gap: 0.75rem;
+}
+
+.auth-card__forgot-link {
+    color: $color-primary;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: color $transition;
+    white-space: nowrap;
+
+    &:hover {
+        color: $color-primary-hover;
+        text-decoration: underline;
+    }
+}
+
+// 8. Buttons
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    height: 42px;
+    padding: 0 1.25rem;
+    border-radius: $radius-md;
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color $transition, transform $transition;
+
+    &--primary {
+        background-color: $color-primary;
+        color: #FFFFFF;
+
+        &:hover {
+            background-color: $color-primary-hover;
+        }
+
+        &:active {
+            transform: translateY(1px);
+        }
+    }
+
+    &--block {
+        width: 100%;
+    }
+
+    &__icon-right {
+        stroke: currentColor;
+        flex-shrink: 0;
+    }
+}
+
+// 9. Footer Component (Centered Horizontally)
+.auth-footer {
+    width: 100%;
+    border-top: 1px solid $color-footer-border;
+    padding: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    &__container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    &__links {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1.5rem;
+        font-size: 0.75rem;
+        color: #6B7280;
+        text-align: center;
+    }
+
+    &__link {
+        color: #6B7280;
+        transition: color $transition;
+
+        &:hover {
+            color: $color-text-title;
+        }
+    }
+
+    &__divider {
+        color: $color-input-border;
+    }
+
+    &__version {
+        color: #6B7280;
+    }
+}
+
+// 10. Mobile Responsiveness
+@media (max-width: 640px) {
+    .auth-header__container {
+        padding: 1rem 1.25rem;
+    }
+
+    .auth-main {
+        padding: 1.25rem 1rem 1.75rem;
+    }
+
+    .auth-card {
+        max-width: 100%;
+
+        &__title {
+            font-size: 1.35rem;
+        }
+    }
+
+    .form-input, .btn {
+        height: 44px;
+    }
+
+    .form-checkbox__label {
+        align-items: flex-start;
+    }
+
+    .form-checkbox__box {
+        margin-top: 2px;
+    }
+
+    .auth-footer {
+        padding: 1.25rem 0;
+
+        &__links {
+            gap: 1rem;
+        }
+    }
+}
+
+// 11. OTP Verification Component
+.auth-card__phone-target {
+    color: $color-text-title;
+    font-weight: 600;
+}
+
+.otp-group {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.5rem 0 1.25rem;
+
+    &__input {
+        width: 100%;
+        max-width: 52px;
+        height: 52px;
+        background-color: #FFFFFF;
+        border: 1.5px solid $color-input-border;
+        border-radius: $radius-md;
+        text-align: center;
+        font-family: inherit;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: $color-text-title;
+        outline: none;
+        transition: border-color $transition, box-shadow $transition, background-color $transition;
+
+        &:hover {
+            border-color: $color-input-border-hover;
+        }
+
+        &:focus {
+            border-color: $color-primary;
+            box-shadow: 0 0 0 3px $color-input-focus-ring;
+        }
+
+        &--filled {
+            border-color: $color-primary;
+            background-color: $color-primary-light;
+        }
+    }
+}
+
+.otp-resend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-size: 0.8125rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+
+    &__text {
+        color: $color-text-muted;
+    }
+
+    &__btn {
+        background: none;
+        border: none;
+        color: $color-text-subtle;
+        font-family: inherit;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        cursor: not-allowed;
+        padding: 0;
+        transition: color $transition;
+
+        &--active {
+            color: $color-primary;
+            cursor: pointer;
+
+            &:hover {
+                color: $color-primary-hover;
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+.auth-card__back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: $color-text-muted;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    transition: color $transition;
+
+    &:hover {
+        color: $color-text-title;
+    }
+}
+
+@media (max-width: 420px) {
+    .otp-group {
+        gap: 0.35rem;
+
+        &__input {
+            height: 46px;
+            font-size: 1.1rem;
+        }
+    }
+}
+
+// 12. Verification Success State
+.badge--success {
+    background-color: #ECFDF5;
+    color: #059669;
+}
+
+.badge__indicator--success {
+    background-color: #10B981;
+}
+
+.auth-success-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem 0 1.25rem;
+
+    &__circle {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background-color: #ECFDF5;
+        border: 2px solid #A7F3D0;
+        color: #10B981;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.12);
+        animation: successPulse 1.8s infinite ease-in-out;
+    }
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.25);
+    }
+    70% {
+        transform: scale(1.03);
+        box-shadow: 0 0 0 10px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.auth-summary {
+    background-color: #F9FAFB;
+    border: 1px solid $color-input-border;
+    border-radius: $radius-md;
+    padding: 1rem 1.25rem;
+    margin: 1.25rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &__row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8125rem;
+    }
+
+    &__label {
+        color: $color-text-muted;
+    }
+
+    &__value {
+        color: $color-text-title;
+        font-weight: 600;
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.15rem 0.55rem;
+        border-radius: $radius-full;
+        background-color: #ECFDF5;
+        color: #059669;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    &__status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background-color: #10B981;
+    }
+}
+
+.auth-card__countdown {
+    color: $color-primary;
+    font-weight: 700;
+}
+
+// 13. Mail Delivery & Recovery States
+.auth-mail-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0.5rem 0 1.25rem;
+
+    &__circle {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background-color: #FFF5F1;
+        border: 2px solid #FFD4C2;
+        color: #F05A28;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 14px rgba(240, 90, 40, 0.15);
+        animation: mailFloat 2.4s infinite ease-in-out;
+    }
+}
+
+@keyframes mailFloat {
+    0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 4px 14px rgba(240, 90, 40, 0.15);
+    }
+    50% {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 18px rgba(240, 90, 40, 0.22);
+    }
+}
+
+.auth-card__email-target {
+    color: $color-text-title;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+// 14. Password Strength Meter & Interactive Rules
+.password-meter {
+    margin-top: 0.45rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    &__bars {
+        display: flex;
+        gap: 5px;
+        width: 100%;
+        height: 4px;
+    }
+
+    &__bar {
+        flex: 1;
+        height: 100%;
+        border-radius: 2px;
+        background-color: #E5E7EB;
+        transition: background-color 200ms ease;
+    }
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.72rem;
+        color: $color-text-muted;
+    }
+
+    &__label {
+        font-weight: 600;
+        transition: color 200ms ease;
+    }
+}
+
+.password-rules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.65rem 0.75rem;
+    background-color: #F9FAFB;
+    border: 1px solid #F3F4F6;
+    border-radius: $radius-md;
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.72rem;
+        color: #6B7280;
+        transition: color 150ms ease;
+
+        svg {
+            flex-shrink: 0;
+            width: 13px;
+            height: 13px;
+            stroke: #9CA3AF;
+            transition: stroke 150ms ease;
+        }
+
+        &--valid {
+            color: #059669;
+            font-weight: 600;
+
+            svg {
+                stroke: #10B981;
+            }
+        }
+    }
+}
+
+.match-feedback {
+    font-size: 0.72rem;
+    margin-top: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: $color-text-muted;
+
+    &--matched {
+        color: #059669;
+        font-weight: 600;
+    }
+
+    &--unmatched {
+        color: #EF4444;
+        font-weight: 500;
+    }
+}
+
+// 15. Notification / Alert Banners
+.auth-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: $radius-md;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    background-color: #F8FAFC;
+    border: 1px solid #E2E8F0;
+    color: #475569;
+    text-align: left;
+
+    &__icon {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        margin-top: 1px;
+        color: #64748B;
+    }
+
+    &--info {
+        background-color: #F0F9FF;
+        border-color: #BAE6FD;
+        color: #0369A1;
+
+        .auth-note__icon {
+            color: #0284C7;
+        }
+    }
+
+    &--warning {
+        background-color: #FFFBEB;
+        border-color: #FDE68A;
+        color: #92400E;
+
+        .auth-note__icon {
+            color: #D97706;
+        }
+    }
+}
+
+.btn--outline {
+    background-color: #FFFFFF;
+    border: 1.5px solid #E5E7EB;
+    color: $color-text-body;
+
+    &:hover {
+        border-color: $color-primary;
+        color: $color-primary;
+        background-color: $color-primary-light;
+    }
+}
+
+.account-target-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    background-color: #F3F4F6;
+    border-radius: $radius-full;
+    font-size: 0.78rem;
+    color: $color-text-title;
+    font-weight: 600;
+    margin: 0.35rem auto 1.25rem;
+    max-width: 100%;
+
+    svg {
+        flex-shrink: 0;
+        color: $color-text-muted;
+    }
+}
+
+// ==========================================================================
+// 16. Split-Screen Card Layout (Desktop Split Hero & Form Panel)
+// ==========================================================================
+body.split-auth-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #F8FAFC;
+    color: $color-text-body;
+    font-family: $font-family;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+.split-layout-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.25rem;
+}
+
+.split-card {
+    display: flex;
+    width: 100%;
+    max-width: 1040px;
+    min-height: 640px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 20px 45px -12px rgba(15, 23, 42, 0.08), 0 0 1px 1px rgba(15, 23, 42, 0.03);
+    overflow: hidden;
+
+    // LEFT COLUMN: Visual & Brand Hero Panel (~45%)
+    &__visual {
+        position: relative;
+        flex: 0 0 45%;
+        min-height: 580px;
+        background: url('resources/car.jpg') center center / cover no-repeat;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2.25rem 2rem;
+        color: #FFFFFF;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.58) 0%, rgba(15, 23, 42, 0.28) 40%, rgba(15, 23, 42, 0.88) 100%);
+            z-index: 1;
+        }
+
+        > * {
+            position: relative;
+            z-index: 2;
+        }
+    }
+
+    // RIGHT COLUMN: Form & Action Panel (~55%)
+    &__form-panel {
+        flex: 0 0 55%;
+        padding: 3rem 3.25rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: #FFFFFF;
+    }
+}
+
+// Visual Header (Left Column Top)
+.visual-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    &__logo {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        text-decoration: none;
+    }
+
+    &__logo-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    }
+
+    &__logo-text {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        letter-spacing: -0.03em;
+    }
+
+    &__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.42rem 0.95rem;
+        border-radius: $radius-full;
+        background: rgba(255, 255, 255, 0.16);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        color: #FFFFFF;
+        font-size: 0.78rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background $transition, transform $transition;
+
+        svg {
+            transition: transform $transition;
+        }
+
+        &:hover {
+            background: rgba(255, 255, 255, 0.26);
+            color: #FFFFFF;
+
+            svg {
+                transform: translateX(2px);
+            }
+        }
+    }
+}
+
+// Visual Bottom (Left Column Bottom)
+.visual-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+
+    &__slogan {
+        font-size: 1.55rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: #FFFFFF;
+        letter-spacing: -0.02em;
+        max-width: 320px;
+    }
+
+    &__pagination {
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+}
+
+.pagination-dash {
+    height: 3px;
+    width: 14px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.35);
+    transition: all 250ms ease;
+
+    &.active {
+        width: 30px;
+        background: #FFFFFF;
+    }
+}
+
+// Right Column Form Hierarchy
+.split-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.15rem;
+
+    &__header {
+        margin-bottom: 0.5rem;
+    }
+
+    &__title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: $color-text-title;
+        letter-spacing: -0.025em;
+        line-height: 1.2;
+        margin-bottom: 0.35rem;
+    }
+
+    &__subtitle {
+        font-size: 0.85rem;
+        color: $color-text-muted;
+        line-height: 1.45;
+    }
+
+    &__link {
+        color: $color-primary;
+        font-weight: 600;
+        text-decoration: none;
+        margin-left: 0.2rem;
+        transition: color $transition;
+
+        &:hover {
+            color: $color-primary-hover;
+            text-decoration: underline;
+        }
+    }
+}
+
+.form-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+}
+
+// Divider Line with Text
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 0.25rem 0;
+    width: 100%;
+
+    &__line {
+        flex: 1;
+        height: 1px;
+        background-color: $color-input-border;
+    }
+
+    &__text {
+        font-size: 0.76rem;
+        color: $color-text-subtle;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+}
+
+// Social Login Row
+.social-auth-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+    width: 100%;
+}
+
+.btn-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    height: 42px;
+    border: 1.5px solid $color-input-border;
+    border-radius: $radius-md;
+    background: #FFFFFF;
+    color: $color-text-body;
+    font-family: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color $transition, background-color $transition, color $transition;
+
+    &__icon {
+        flex-shrink: 0;
+    }
+
+    &:hover {
+        border-color: $color-input-border-hover;
+        background-color: #F9FAFB;
+        color: $color-text-title;
+    }
+}
+
+// Responsive Design for Split Card
+@media (max-width: 960px) {
+    .split-layout-wrapper {
+        padding: 1.25rem 1rem;
+    }
+
+    .split-card {
+        flex-direction: column;
+        max-width: 540px;
+        min-height: auto;
+
+        &__visual {
+            flex: none;
+            min-height: 290px;
+            padding: 1.5rem 1.5rem 1.75rem;
+        }
+
+        &__form-panel {
+            flex: none;
+            padding: 2.25rem 1.75rem;
+        }
+    }
+
+    .visual-bottom__slogan {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 520px) {
+    .split-card__form-panel {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .form-row-grid {
+        grid-template-columns: 1fr;
+        gap: 1.05rem;
+    }
+
+    .social-auth-grid {
+        grid-template-columns: 1fr;
+        gap: 0.65rem;
+    }
+}
+
+
+
+

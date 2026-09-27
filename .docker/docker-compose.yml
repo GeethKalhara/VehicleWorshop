@@ -26,6 +26,7 @@ services:
          CACHE_HOST: cache
          CACHE_PORT: "6379"
          CACHE_PASSWORD: ${CACHE_PASSWORD:?CACHE_PASSWORD not in .env}
+         VIEW_PATH: web/resources/views
       depends_on:
          db:
             condition: service_healthy

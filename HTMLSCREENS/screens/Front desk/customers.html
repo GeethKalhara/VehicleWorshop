@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Customers & Vehicles - VWMS Operations</title>
+    <meta name="description"
+        content="VWMS Front Desk Customers and Vehicle Fleet Directory with live profile inspections, service history, and vehicle registration.">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F05A28',
+                            'orange-hover': '#D94819',
+                            'orange-light': '#FFF7ED',
+                            'orange-border': '#FFEDD5',
+                        },
+                        navy: {
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Active nav item highlight */
+        .nav-item-active {
+            background: #F05A28;
+            color: #FFFFFF;
+        }
+
+        /* Customer Row Selected Styling */
+        .customer-row-selected {
+            background-color: rgba(254, 243, 199, 0.45) !important;
+            border-left: 4px solid #F05A28 !important;
+        }
+
+        /* Subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        /* Detail Sidebar slide transition on mobile */
+        @media (max-width: 1023px) {
+            #customerDetailDrawer {
+                transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <div class="flex-1 flex min-h-screen">
+
+        <!-- ======================================================== -->
+        <!-- 1. LEFT SIDEBAR: DARK OPERATIONS NAVIGATION             -->
+        <!-- ======================================================== -->
+        <aside id="sidebar"
+            class="fixed top-0 bottom-0 left-0 w-64 bg-[#0F172A] text-white z-50 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:z-auto border-r border-slate-800 flex-shrink-0">
+
+            <!-- Top Container: Logo + Menu Items -->
+            <div class="flex flex-col">
+                <!-- Top Brand: VWMS OS -->
+                <div class="px-5 py-5 border-b border-slate-800/80 flex items-center justify-between">
+                    <a href="index.html" class="flex items-center gap-2.5 group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#F05A28] flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform duration-200">
+                            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex items-center text-lg font-bold tracking-tight">
+                            <span class="text-white">VWMS</span>
+                            <span class="text-[#F05A28] ml-1.5 font-extrabold">OS</span>
+                        </div>
+                    </a>
+
+                    <!-- Mobile Drawer Close Button -->
+                    <button type="button" class="lg:hidden text-slate-400 hover:text-white p-1"
+                        onclick="toggleMobileSidebar(false)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="px-3 py-5 space-y-1.5" aria-label="Front Desk Navigation">
+                    <div class="px-3 pb-2 text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+                        OPERATIONS
+                    </div>
+
+                    <!-- 1. Intake -->
+                    <a href="index.html"
+                        class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition-colors duration-150">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <polyline points="9 15 12 12 15 15"></polyline>
+                        </svg>
+                        <span>Intake</span>
+                    </a>
+
+                    <!-- 2. Active Jobs -->
+                    <a href="active-jobs.html"
+                        class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition-colors duration-150">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>Active Jobs</span>
+                    </a>
+
+                    <!-- 3. Invoicing -->
+                    <a href="#invoicing" onclick="showToast('Invoicing terminal ready')"
+                        class="flex items-center gap-3 px-3 py-2 rounded-md text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition-colors duration-150">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                            <line x1="6" y1="8" x2="10" y2="8"></line>
+                            <line x1="6" y1="12" x2="18" y2="12"></line>
+                            <line x1="6" y1="16" x2="14" y2="16"></line>
+                        </svg>
+                        <span>Invoicing</span>
+                    </a>
+
+                    <!-- 4. Customers & Vehicles (ACTIVE TAB) -->
+                    <a href="customers.html"
+                        class="nav-item-active flex items-center gap-3 px-3 py-2 rounded-md font-semibold text-sm transition-all duration-150 shadow-sm">
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C1.4 11.2 1 12 1 13v3c0 .6.4 1 1 1h2">
+                            </path>
+                            <circle cx="7" cy="17" r="2"></circle>
+                            <path d="M9 17h6"></path>
+                            <circle cx="17" cy="17" r="2"></circle>
+                        </svg>
+                        <span>Customers & Vehicles</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Bottom Section: Front Desk Agent Profile Card -->
+            <div class="p-3 border-t border-slate-800">
+                <div
+                    class="border border-dashed border-slate-700/80 rounded-lg p-2.5 flex items-center justify-between bg-slate-900/40">
+                    <div class="flex items-center gap-2.5">
+                        <div class="relative flex-shrink-0">
+                            <div
+                                class="w-8 h-8 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <span
+                                class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0F172A] rounded-full"></span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-xs font-semibold text-white truncate leading-tight">Front Desk
+                                Agent</span>
+                            <span class="text-[11px] text-slate-400 truncate leading-tight mt-0.5">Intake Station
+                                01</span>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="lockStation()"
+                        class="p-1.5 text-slate-500 hover:text-slate-200 transition-colors" title="Lock Workstation">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Mobile Sidebar Overlay Backdrop -->
+        <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/60 z-40 lg:hidden hidden backdrop-blur-sm"
+            onclick="toggleMobileSidebar(false)"></div>
+
+        <!-- ======================================================== -->
+        <!-- 2. MAIN WORKSPACE CONTAINER                             -->
+        <!-- ======================================================== -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+            <!-- Top Header Bar -->
+            <header
+                class="bg-white border-b border-slate-200/90 h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden text-slate-600 hover:text-slate-900 p-1.5 rounded-md hover:bg-slate-100"
+                        onclick="toggleMobileSidebar(true)" aria-label="Open menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-400">Front Desk</span>
+                        <span class="text-slate-300">/</span>
+                        <span class="text-xs font-bold text-slate-800">Directory</span>
+                    </div>
+                </div>
+
+                <!-- Right Utilities -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <div class="relative w-48 sm:w-64 hidden sm:block">
+                        <span
+                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </span>
+                        <input type="text" id="topNavSearch" onkeyup="handleTopSearch(event)"
+                            placeholder="Quick lookup..."
+                            class="w-full pl-9 pr-4 py-1.5 text-xs bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 rounded-md focus:outline-none focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] text-slate-700 transition-all placeholder:text-slate-400">
+                    </div>
+
+                    <!-- Notification Bell -->
+                    <button type="button" onclick="showToast('Customer directory synchronized')"
+                        class="w-8 h-8 rounded-full border border-slate-200 bg-white flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors relative"
+                        aria-label="Notifications">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                        </svg>
+                        <span
+                            class="absolute -top-1 -right-1 w-4 h-4 bg-[#F05A28] text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none shadow-sm">
+                            2
+                        </span>
+                    </button>
+
+                    <!-- Profile Circle -->
+                    <button type="button" onclick="showToast('Station #01 - Active')"
+                        class="w-8 h-8 rounded-full bg-[#B45309] text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm hover:opacity-95 transition-opacity"
+                        aria-label="Account">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1680px] w-full mx-auto space-y-5">
+
+                <!-- Page Headline & Action Toolbar (Matching Screenshot) -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h1 class="text-2xl font-extrabold text-[#0F172A] tracking-tight">Customers & Vehicles</h1>
+                        <span id="registeredBadge"
+                            class="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            1,428 Registered
+                        </span>
+                    </div>
+
+                    <!-- CTA Button: + Add Customer -->
+                    <button type="button" onclick="openAddCustomerModal()"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F05A28] hover:bg-[#D94819] text-white text-xs sm:text-sm font-semibold shadow-sm transition-colors duration-150 whitespace-nowrap self-start sm:self-auto">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <span>+ Add Customer</span>
+                    </button>
+                </div>
+
+                <!-- Primary Search Bar (Matching Screenshot) -->
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-400">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </span>
+                    <input type="text" id="customerSearchInput" oninput="handleCustomerSearch()"
+                        placeholder="Search customer by name or phone number..."
+                        class="w-full pl-11 pr-4 py-3 text-xs sm:text-sm bg-white border border-slate-200/90 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F05A28]/20 focus:border-[#F05A28] text-slate-800 placeholder:text-slate-400 shadow-2xs transition-all">
+                </div>
+
+                <!-- ==================================================== -->
+                <!-- 2-COLUMN WORKSPACE: TABLE (LEFT) + SIDEBAR (RIGHT)   -->
+                <!-- ==================================================== -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                    <!-- Customer List Table Column (lg:col-span-7 xl:col-span-8) -->
+                    <div
+                        class="lg:col-span-7 xl:col-span-8 bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden flex flex-col">
+
+                        <!-- Responsive Table Container -->
+                        <div class="overflow-x-auto min-h-[500px]">
+                            <table class="w-full text-left border-collapse" id="customersTable">
+                                <thead>
+                                    <tr
+                                        class="border-b border-slate-200 bg-white text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                        <th scope="col" class="py-3.5 px-4 sm:px-6">NAME / ID</th>
+                                        <th scope="col" class="py-3.5 px-3 sm:px-4">CONTACT NO</th>
+                                        <th scope="col" class="py-3.5 px-3 sm:px-4">EMAIL</th>
+                                        <th scope="col" class="py-3.5 px-4 sm:px-6 text-right sm:text-left">VEHICLES
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customersTableBody" class="divide-y divide-slate-100 text-xs sm:text-sm">
+                                    <!-- Populated dynamically by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Table Pagination Footer (Matching Screenshot) -->
+                        <div
+                            class="px-4 sm:px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500 bg-white">
+                            <div id="paginationSummary">
+                                Showing <span class="font-bold text-slate-800">1-7</span> of <span
+                                    class="font-bold text-slate-800">1,428</span> clients
+                            </div>
+
+                            <!-- Page Navigation Controls -->
+                            <div class="flex items-center gap-1.5 self-center sm:self-auto select-none">
+                                <button type="button" onclick="showToast('Already on First Page')"
+                                    class="px-2.5 py-1 text-slate-400 hover:text-slate-700 transition-colors font-medium">
+                                    &lt; Prev
+                                </button>
+
+                                <button type="button"
+                                    class="w-7 h-7 rounded bg-[#F05A28] text-white font-bold text-xs flex items-center justify-center shadow-xs">
+                                    1
+                                </button>
+
+                                <button type="button" onclick="showToast('Navigating to Page 2...')"
+                                    class="w-7 h-7 rounded hover:bg-slate-100 text-slate-600 font-medium text-xs flex items-center justify-center transition-colors">
+                                    2
+                                </button>
+
+                                <button type="button" onclick="showToast('Navigating to Page 3...')"
+                                    class="w-7 h-7 rounded hover:bg-slate-100 text-slate-600 font-medium text-xs flex items-center justify-center transition-colors">
+                                    3
+                                </button>
+
+                                <span class="px-1 text-slate-400">...</span>
+
+                                <button type="button" onclick="showToast('Navigating to Page 179...')"
+                                    class="px-2 h-7 rounded hover:bg-slate-100 text-slate-600 font-medium text-xs flex items-center justify-center transition-colors">
+                                    179
+                                </button>
+
+                                <button type="button" onclick="showToast('Navigating to Next Page...')"
+                                    class="px-2.5 py-1 text-slate-600 hover:text-slate-900 transition-colors font-medium">
+                                    Next &gt;
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- ================================================ -->
+                    <!-- CUSTOMER & VEHICLES DETAIL SIDEBAR (RIGHT)       -->
+                    <!-- ================================================ -->
+                    <div id="customerDetailDrawer"
+                        class="lg:col-span-5 xl:col-span-4 bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-5 sticky top-20 transition-all">
+
+                        <!-- Top Header: Customer Avatar, Full Name & Status -->
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div id="detailAvatar"
+                                    class="w-12 h-12 rounded-full bg-[#0F172A] text-white font-bold text-base flex items-center justify-center flex-shrink-0 shadow-sm">
+                                    CJ
+                                </div>
+                                <div class="flex flex-col min-w-0">
+                                    <h2 id="detailCustomerName"
+                                        class="font-bold text-slate-900 text-base sm:text-lg leading-tight truncate">
+                                        Chathurika Jayawardena
+                                    </h2>
+                                    <div class="mt-1">
+                                        <span id="detailStatusPill"
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            Active
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Close / Dismiss button (visible on smaller viewports or for collapse) -->
+                            <button type="button" onclick="closeDetailDrawerMobile()"
+                                class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                                title="Close Panel">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- 2-Column Metrics Cards (Matching Screenshot) -->
+                        <div class="grid grid-cols-2 gap-3 text-left">
+                            <!-- Metric 1: Total Lifetime Spend -->
+                            <div class="bg-slate-50/90 border border-slate-100 rounded-xl p-3">
+                                <span class="block text-[11px] font-medium text-slate-500 leading-tight">
+                                    Total Lifetime Spend
+                                </span>
+                                <span id="detailSpend"
+                                    class="block text-sm sm:text-base font-extrabold text-slate-900 mt-1">
+                                    LKR 492,000
+                                </span>
+                            </div>
+
+                            <!-- Metric 2: Fleet Count -->
+                            <div class="bg-slate-50/90 border border-slate-100 rounded-xl p-3">
+                                <span class="block text-[11px] font-medium text-slate-500 leading-tight">
+                                    Fleet Count
+                                </span>
+                                <span id="detailFleetCount"
+                                    class="block text-sm sm:text-base font-extrabold text-slate-900 mt-1">
+                                    2 Registered
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Contact Pills Block (Matching Screenshot) -->
+                        <div class="space-y-2">
+                            <!-- Phone -->
+                            <a id="detailPhoneLink" href="tel:+94779081222"
+                                class="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors group">
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-[#F05A28] transition-colors flex-shrink-0"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                                    </path>
+                                </svg>
+                                <span id="detailPhone" class="truncate">+94 77 908 1222</span>
+                            </a>
+
+                            <!-- Email -->
+                            <a id="detailEmailLink" href="mailto:chathurika.j@yahoo.com"
+                                class="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 transition-colors group">
+                                <svg class="w-4 h-4 text-slate-400 group-hover:text-[#F05A28] transition-colors flex-shrink-0"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
+                                    </path>
+                                    <polyline points="22,6 12,13 2,6"></polyline>
+                                </svg>
+                                <span id="detailEmail" class="truncate">chathurika.j@yahoo.com</span>
+                            </a>
+                        </div>
+
+                        <!-- Registered Vehicles List (Matching Screenshot) -->
+                        <div class="space-y-2.5 pt-1">
+                            <div class="flex items-center justify-between">
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">REGISTERED
+                                    VEHICLES</span>
+                                <button type="button" onclick="openAddVehicleQuickModal()"
+                                    class="text-[11px] font-bold text-[#F05A28] hover:underline">
+                                    + Add
+                                </button>
+                            </div>
+
+                            <div id="detailVehiclesList" class="space-y-2">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Recent Service Records (Matching Screenshot) -->
+                        <div class="space-y-2.5 pt-2 border-t border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">
+                                RECENT SERVICE RECORDS
+                            </span>
+
+                            <div id="detailServicesList" class="space-y-2">
+                                <!-- Populated dynamically -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Action Footer -->
+                        <div class="pt-3 border-t border-slate-100 flex items-center gap-2">
+                            <button type="button" onclick="createNewIntakeForCustomer()"
+                                class="flex-1 py-2 rounded-lg bg-[#F05A28] hover:bg-[#D94819] text-white text-xs font-bold text-center shadow-xs transition-colors">
+                                + New Service Intake
+                            </button>
+                            <button type="button" onclick="showToast('Customer profile exported')"
+                                class="px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors">
+                                Export
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 3. MODAL: + ADD NEW CUSTOMER                             -->
+    <!-- ======================================================== -->
+    <div id="addCustomerModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden"
+        role="dialog" aria-modal="true">
+        <div
+            class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden transform transition-all">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="flex items-center gap-2.5">
+                    <div
+                        class="w-8 h-8 rounded-lg bg-orange-100 text-[#F05A28] flex items-center justify-center font-bold">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900 leading-tight">Register New Customer</h3>
+                        <p class="text-[11px] text-slate-500">Create profile and link initial fleet vehicle</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeAddCustomerModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Form -->
+            <form onsubmit="handleCreateCustomer(event)" class="p-6 space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="newCustName" class="block font-semibold text-slate-700 mb-1">Customer Full Name
+                            *</label>
+                        <input type="text" id="newCustName" required placeholder="e.g. Kasun Bandara"
+                            class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none text-slate-800 font-medium">
+                    </div>
+                    <div>
+                        <label for="newCustPhone" class="block font-semibold text-slate-700 mb-1">Mobile Contact No
+                            *</label>
+                        <input type="tel" id="newCustPhone" required placeholder="+94 77 000 0000"
+                            class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none text-slate-800 font-medium">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    <div>
+                        <label for="newCustEmail" class="block font-semibold text-slate-700 mb-1">Email Address
+                            *</label>
+                        <input type="email" id="newCustEmail" required placeholder="customer@domain.com"
+                            class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none text-slate-800">
+                    </div>
+                    <div>
+                        <label for="newCustCategory" class="block font-semibold text-slate-700 mb-1">Client Tier /
+                            Category</label>
+                        <select id="newCustCategory"
+                            class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none font-medium">
+                            <option value="Active">Standard Active</option>
+                            <option value="VIP">VIP Individual</option>
+                            <option value="Corporate">Corporate Fleet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Initial Vehicle Section -->
+                <div class="pt-2 border-t border-slate-100">
+                    <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block mb-2">Initial
+                        Vehicle Link</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                        <div>
+                            <label for="newCustPlate" class="block font-semibold text-slate-700 mb-1">Registration Plate
+                                No *</label>
+                            <input type="text" id="newCustPlate" required placeholder="WP CAR-5544"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none font-mono uppercase font-bold text-slate-800">
+                        </div>
+                        <div>
+                            <label for="newCustModel" class="block font-semibold text-slate-700 mb-1">Make / Model /
+                                Year *</label>
+                            <input type="text" id="newCustModel" required placeholder="e.g. 2020 Honda Vezel"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-md focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none text-slate-800">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+                    <button type="button" onclick="closeAddCustomerModal()"
+                        class="px-4 py-2 rounded-md border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-4 py-2 rounded-md bg-[#F05A28] hover:bg-[#D94819] text-white font-bold shadow-sm transition-colors">
+                        Save & View Profile
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-5 right-5 z-50 bg-[#0F172A] text-white text-xs px-4 py-3 rounded-lg shadow-xl border border-slate-700 flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMsg">Action completed successfully!</span>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- 4. JAVASCRIPT LOGIC & MOCK DATA (MATCHING SCREENSHOT)   -->
+    <!-- ======================================================== -->
+    <script>
+        // Customers Data Matching Design Mockup
+        const CUSTOMERS_DATA = [
+            {
+                id: 'C-1049',
+                name: 'Sachintha Rajapaksha',
+                initials: 'SR',
+                avatarBg: 'bg-[#F05A28]',
+                avatarColor: 'text-white',
+                phone: '+94 77 123 4567',
+                email: 'sachintha.r@gmail.com',
+                status: 'Active',
+                spend: 'LKR 285,000',
+                fleetCount: 2,
+                vehicles: [
+                    {
+                        plate: 'WP CBA-1234',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2019 Honda Civic RS'
+                    },
+                    {
+                        plate: 'WP CAK-8812',
+                        status: 'Completed',
+                        statusClass: 'bg-slate-100 text-slate-700 border-slate-200',
+                        model: '2016 Toyota Prius S'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: '40,000km Major Service',
+                        subtitle: 'WP CBA-1234 • Active',
+                        iconType: 'wrench'
+                    },
+                    {
+                        title: 'Brake Disc Skimming & Scan',
+                        subtitle: 'WP CAK-8812 • Completed',
+                        iconType: 'check'
+                    }
+                ]
+            },
+            {
+                id: 'C-1050',
+                name: 'Kavinda Perera',
+                initials: 'KP',
+                avatarBg: 'bg-[#0F172A]',
+                avatarColor: 'text-white',
+                phone: '+94 71 892 3311',
+                email: 'kavinda.perera@aperture.lk',
+                status: 'Corporate Fleet',
+                spend: 'LKR 920,000',
+                fleetCount: 4,
+                vehicles: [
+                    {
+                        plate: 'WP CAD-5521',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2021 Mitsubishi Outlander'
+                    },
+                    {
+                        plate: 'WP CBF-9901',
+                        status: 'Ready',
+                        statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        model: '2018 Toyota Prado TX'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: 'Suspension Bushing Overhaul',
+                        subtitle: 'WP CAD-5521 • Active',
+                        iconType: 'wrench'
+                    },
+                    {
+                        title: 'Transmission Fluid Flush',
+                        subtitle: 'WP CBF-9901 • Completed',
+                        iconType: 'check'
+                    }
+                ]
+            },
+            {
+                id: 'C-1051',
+                name: 'Dilshan Fernando',
+                initials: 'DF',
+                avatarBg: 'bg-slate-200',
+                avatarColor: 'text-slate-700',
+                phone: '+94 77 445 0918',
+                email: 'dilshan.f@outlook.com',
+                status: 'Active',
+                spend: 'LKR 145,000',
+                fleetCount: 1,
+                vehicles: [
+                    {
+                        plate: 'NW WP-9871',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2018 Toyota Aqua G'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: 'Gearbox Calibration & Scan',
+                        subtitle: 'NW WP-9871 • Active',
+                        iconType: 'wrench'
+                    }
+                ]
+            },
+            {
+                id: 'C-1052',
+                name: 'Anushka Wickramasinghe',
+                initials: 'AW',
+                avatarBg: 'bg-[#B45309]',
+                avatarColor: 'text-white',
+                phone: '+94 76 332 9940',
+                email: 'anushka.w@ceylonrubber.com',
+                status: 'Active',
+                spend: 'LKR 610,000',
+                fleetCount: 3,
+                vehicles: [
+                    {
+                        plate: 'CP CAA-8040',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2020 Kia Sportage GT'
+                    },
+                    {
+                        plate: 'WP CBB-6701',
+                        status: 'Ready',
+                        statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        model: '2019 Toyota Premio 1.5'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: 'Radiator & Coolant System Overhaul',
+                        subtitle: 'CP CAA-8040 • Active',
+                        iconType: 'wrench'
+                    },
+                    {
+                        title: 'Hybrid Battery Diagnostic Scan',
+                        subtitle: 'WP CBB-6701 • Completed',
+                        iconType: 'check'
+                    }
+                ]
+            },
+            {
+                id: 'C-1054',
+                name: 'Chathurika Jayawardena',
+                initials: 'CJ',
+                avatarBg: 'bg-[#0F172A]',
+                avatarColor: 'text-white',
+                phone: '+94 77 908 1222',
+                email: 'chathurika.j@yahoo.com',
+                status: 'Active',
+                spend: 'LKR 492,000',
+                fleetCount: 2,
+                vehicles: [
+                    {
+                        plate: 'WP CBJ-5049',
+                        status: 'Ready',
+                        statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        model: '2020 Hyundai Tucson'
+                    },
+                    {
+                        plate: 'WP CAG-9912',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2017 Suzuki Swift RS'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: '40,000km Major Service',
+                        subtitle: 'WP CAG-9912 • Active',
+                        iconType: 'wrench'
+                    },
+                    {
+                        title: 'Front Brake Pad Replacement',
+                        subtitle: 'WP CBJ-5049 • Completed',
+                        iconType: 'check'
+                    }
+                ]
+            },
+            {
+                id: 'C-1055',
+                name: 'Pradeep Kumara',
+                initials: 'PK',
+                avatarBg: 'bg-slate-200',
+                avatarColor: 'text-slate-700',
+                phone: '+94 70 219 8831',
+                email: 'pradeep.k@gmail.com',
+                status: 'Active',
+                spend: 'LKR 78,000',
+                fleetCount: 1,
+                vehicles: [
+                    {
+                        plate: 'WP CAB-7892',
+                        status: 'In Queue',
+                        statusClass: 'bg-slate-100 text-slate-700 border-slate-200',
+                        model: '2017 Nissan Leaf EV'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: '40k Service & Engine Tune-up',
+                        subtitle: 'WP CAB-7892 • In Queue',
+                        iconType: 'wrench'
+                    }
+                ]
+            },
+            {
+                id: 'C-1056',
+                name: 'Rohan Dharmadasa',
+                initials: 'RD',
+                avatarBg: 'bg-[#F05A28]',
+                avatarColor: 'text-white',
+                phone: '+94 77 601 4488',
+                email: 'rohan.d@transceylon.com',
+                status: 'VIP Corporate',
+                spend: 'LKR 1,840,000',
+                fleetCount: 6,
+                vehicles: [
+                    {
+                        plate: 'WP KX-3108',
+                        status: 'Ready',
+                        statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                        model: '2021 Toyota Hilux Revo'
+                    },
+                    {
+                        plate: 'WP CAR-8821',
+                        status: 'In Workshop',
+                        statusClass: 'bg-amber-50 text-amber-700 border-amber-200',
+                        model: '2020 Isuzu D-Max V-Cross'
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: 'Express Detailing & AC Sanitization',
+                        subtitle: 'WP KX-3108 • Completed',
+                        iconType: 'check'
+                    },
+                    {
+                        title: 'Heavy Duty Steering Alignment',
+                        subtitle: 'WP CAR-8821 • Active',
+                        iconType: 'wrench'
+                    }
+                ]
+            }
+        ];
+
+        // Currently selected customer ID (defaults to 'C-1054' Chathurika Jayawardena as in screenshot)
+        let selectedCustomerId = 'C-1054';
+
+        // Render Customers Table
+        function renderCustomersTable(customersToRender) {
+            const tbody = document.getElementById('customersTableBody');
+            tbody.innerHTML = '';
+
+            customersToRender.forEach(cust => {
+                const isSelected = cust.id === selectedCustomerId;
+                const tr = document.createElement('tr');
+                tr.id = `row-${cust.id}`;
+                tr.onclick = () => selectCustomer(cust.id);
+                tr.className = `cursor-pointer transition-colors duration-150 border-b border-slate-100 ${isSelected ? 'customer-row-selected' : 'hover:bg-slate-50/80 bg-white'
+                    }`;
+
+                // Email display truncation
+                const emailDisplay = cust.email.length > 22 ? cust.email.substring(0, 20) + '...' : cust.email;
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 sm:px-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-full ${cust.avatarBg} ${cust.avatarColor} font-bold text-xs flex items-center justify-center flex-shrink-0 shadow-2xs">
+                                ${cust.initials}
+                            </div>
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-bold text-slate-900 text-xs sm:text-sm truncate leading-tight">${cust.name}</span>
+                                <span class="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">Client ID: #${cust.id}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3 px-3 sm:px-4 font-medium text-slate-700 whitespace-nowrap text-xs">
+                        ${cust.phone}
+                    </td>
+                    <td class="py-3 px-3 sm:px-4 text-slate-500 text-xs whitespace-nowrap" title="${cust.email}">
+                        ${emailDisplay}
+                    </td>
+                    <td class="py-3 px-4 sm:px-6 text-right sm:text-left whitespace-nowrap">
+                        <span class="inline-block px-2.5 py-1 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                            ${cust.fleetCount} ${cust.fleetCount === 1 ? 'vehicle' : 'vehicles'}
+                        </span>
+                    </td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Select Customer and Update Details Sidebar
+        function selectCustomer(id) {
+            selectedCustomerId = id;
+
+            // Update row highlighting
+            document.querySelectorAll('#customersTableBody tr').forEach(row => {
+                row.classList.remove('customer-row-selected');
+                row.classList.add('hover:bg-slate-50/80', 'bg-white');
+            });
+
+            const activeRow = document.getElementById(`row-${id}`);
+            if (activeRow) {
+                activeRow.classList.add('customer-row-selected');
+                activeRow.classList.remove('hover:bg-slate-50/80', 'bg-white');
+            }
+
+            // Find customer data
+            const cust = CUSTOMERS_DATA.find(c => c.id === id);
+            if (!cust) return;
+
+            // Update Details Card Elements
+            const avatar = document.getElementById('detailAvatar');
+            avatar.className = `w-12 h-12 rounded-full ${cust.avatarBg} ${cust.avatarColor} font-bold text-base flex items-center justify-center flex-shrink-0 shadow-sm`;
+            avatar.textContent = cust.initials;
+
+            document.getElementById('detailCustomerName').textContent = cust.name;
+            document.getElementById('detailStatusPill').textContent = cust.status || 'Active';
+            document.getElementById('detailSpend').textContent = cust.spend;
+            document.getElementById('detailFleetCount').textContent = `${cust.fleetCount} Registered`;
+
+            // Phone and Email
+            document.getElementById('detailPhone').textContent = cust.phone;
+            document.getElementById('detailPhoneLink').href = `tel:${cust.phone.replace(/[^0-9+]/g, '')}`;
+
+            document.getElementById('detailEmail').textContent = cust.email;
+            document.getElementById('detailEmailLink').href = `mailto:${cust.email}`;
+
+            // Render Registered Vehicles
+            const vehiclesList = document.getElementById('detailVehiclesList');
+            vehiclesList.innerHTML = '';
+            if (cust.vehicles && cust.vehicles.length > 0) {
+                cust.vehicles.forEach(v => {
+                    const vCard = document.createElement('div');
+                    vCard.className = 'p-3 rounded-xl border border-slate-200/90 bg-slate-50/50 hover:bg-slate-50 transition-colors space-y-1.5';
+                    vCard.innerHTML = `
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="font-mono font-bold text-white text-[11px] sm:text-xs bg-[#0F172A] px-2.5 py-1 rounded tracking-tight">
+                                ${v.plate}
+                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border ${v.statusClass}">
+                                • ${v.status}
+                            </span>
+                        </div>
+                        <div class="text-xs font-semibold text-slate-800 pt-0.5">
+                            ${v.model}
+                        </div>
+                    `;
+                    vehiclesList.appendChild(vCard);
+                });
+            } else {
+                vehiclesList.innerHTML = `<p class="text-xs text-slate-400 italic">No registered vehicles found.</p>`;
+            }
+
+            // Render Recent Services
+            const servicesList = document.getElementById('detailServicesList');
+            servicesList.innerHTML = '';
+            if (cust.recentServices && cust.recentServices.length > 0) {
+                cust.recentServices.forEach(s => {
+                    const sCard = document.createElement('div');
+                    sCard.className = 'p-3 rounded-xl border border-slate-200/80 bg-white flex items-center gap-3 shadow-2xs';
+
+                    const iconBg = s.iconType === 'wrench' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600';
+                    const iconSvg = s.iconType === 'wrench'
+                        ? `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>`
+                        : `<svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+
+                    sCard.innerHTML = `
+                        <div class="w-8 h-8 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0">
+                            ${iconSvg}
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="font-bold text-slate-900 text-xs truncate leading-tight">${s.title}</span>
+                            <span class="text-[11px] text-slate-400 font-medium mt-0.5 leading-tight">${s.subtitle}</span>
+                        </div>
+                    `;
+                    servicesList.appendChild(sCard);
+                });
+            } else {
+                servicesList.innerHTML = `<p class="text-xs text-slate-400 italic">No recent service history recorded.</p>`;
+            }
+
+            // On mobile devices, smoothly scroll to detail view
+            if (window.innerWidth < 1024) {
+                document.getElementById('customerDetailDrawer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        // Live Search Filtering
+        function handleCustomerSearch() {
+            const query = document.getElementById('customerSearchInput').value.toLowerCase().trim();
+            const filtered = CUSTOMERS_DATA.filter(cust => {
+                return (
+                    cust.name.toLowerCase().includes(query) ||
+                    cust.phone.toLowerCase().includes(query) ||
+                    cust.email.toLowerCase().includes(query) ||
+                    cust.id.toLowerCase().includes(query) ||
+                    cust.vehicles.some(v => v.plate.toLowerCase().includes(query) || v.model.toLowerCase().includes(query))
+                );
+            });
+
+            renderCustomersTable(filtered);
+
+            // Re-highlight selected customer if still in filtered list
+            if (filtered.some(c => c.id === selectedCustomerId)) {
+                const row = document.getElementById(`row-${selectedCustomerId}`);
+                if (row) row.classList.add('customer-row-selected');
+            } else if (filtered.length > 0) {
+                selectCustomer(filtered[0].id);
+            }
+        }
+
+        // Top Nav Quick Search
+        function handleTopSearch(e) {
+            const query = e.target.value;
+            const mainSearch = document.getElementById('customerSearchInput');
+            mainSearch.value = query;
+            handleCustomerSearch();
+        }
+
+        // Add Customer Modal Handlers
+        function openAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.remove('hidden');
+            document.getElementById('newCustName').focus();
+        }
+
+        function closeAddCustomerModal() {
+            document.getElementById('addCustomerModal').classList.add('hidden');
+        }
+
+        // Handle Customer Registration Form Submit
+        function handleCreateCustomer(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('newCustName').value.trim();
+            const phone = document.getElementById('newCustPhone').value.trim();
+            const email = document.getElementById('newCustEmail').value.trim();
+            const category = document.getElementById('newCustCategory').value;
+            const plate = document.getElementById('newCustPlate').value.trim().toUpperCase();
+            const model = document.getElementById('newCustModel').value.trim();
+
+            const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+            const newId = 'C-' + (1056 + CUSTOMERS_DATA.length);
+
+            const newCustomer = {
+                id: newId,
+                name: name,
+                initials: initials,
+                avatarBg: 'bg-[#F05A28]',
+                avatarColor: 'text-white',
+                phone: phone,
+                email: email,
+                status: category,
+                spend: 'LKR 0',
+                fleetCount: 1,
+                vehicles: [
+                    {
+                        plate: plate,
+                        status: 'Registered',
+                        statusClass: 'bg-blue-50 text-blue-700 border-blue-200',
+                        model: model
+                    }
+                ],
+                recentServices: [
+                    {
+                        title: 'Initial Intake Scan & Registration',
+                        subtitle: `${plate} • New Registration`,
+                        iconType: 'check'
+                    }
+                ]
+            };
+
+            // Add to list and select
+            CUSTOMERS_DATA.unshift(newCustomer);
+            selectedCustomerId = newId;
+
+            renderCustomersTable(CUSTOMERS_DATA);
+            selectCustomer(newId);
+
+            closeAddCustomerModal();
+            e.target.reset();
+
+            // Update count badge
+            document.getElementById('registeredBadge').textContent = `${(1428 + CUSTOMERS_DATA.length - 7).toLocaleString()} Registered`;
+            showToast(`Registered ${name} (#${newId})`);
+        }
+
+        // Add Vehicle Quick Modal
+        function openAddVehicleQuickModal() {
+            const plate = prompt('Enter Vehicle Registration Plate (e.g. WP CAA-9988):');
+            if (!plate) return;
+            const model = prompt('Enter Vehicle Model & Year (e.g. 2021 Toyota Corolla):');
+            if (!model) return;
+
+            const cust = CUSTOMERS_DATA.find(c => c.id === selectedCustomerId);
+            if (cust) {
+                cust.vehicles.unshift({
+                    plate: plate.toUpperCase(),
+                    status: 'Ready',
+                    statusClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                    model: model
+                });
+                cust.fleetCount = cust.vehicles.length;
+                renderCustomersTable(CUSTOMERS_DATA);
+                selectCustomer(selectedCustomerId);
+                showToast(`Added ${plate.toUpperCase()} to ${cust.name}'s fleet`);
+            }
+        }
+
+        // Action: Navigate to new intake prefilled
+        function createNewIntakeForCustomer() {
+            const cust = CUSTOMERS_DATA.find(c => c.id === selectedCustomerId);
+            if (cust && cust.vehicles.length > 0) {
+                const primaryPlate = cust.vehicles[0].plate;
+                showToast(`Opening Intake for ${primaryPlate}...`);
+                setTimeout(() => {
+                    window.location.href = `index.html?plate=${encodeURIComponent(primaryPlate)}&phone=${encodeURIComponent(cust.phone)}`;
+                }, 400);
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Mobile drawer close helper
+        function closeDetailDrawerMobile() {
+            if (window.innerWidth < 1024) {
+                document.getElementById('customersTable').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                showToast('Customer inspection panel active');
+            }
+        }
+
+        // Mobile Sidebar Drawer Toggle
+        function toggleMobileSidebar(open) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (open) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        // Station Lock Trigger
+        function lockStation() {
+            if (confirm('Lock Front Desk Intake Station #01 and return to staff login?')) {
+                window.location.href = '../staff login/login.html';
+            }
+        }
+
+        // Toast feedback
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Escape Key Listener
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAddCustomerModal();
+                toggleMobileSidebar(false);
+            }
+        });
+
+        // Initialize on DOM Ready
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCustomersTable(CUSTOMERS_DATA);
+            selectCustomer('C-1054');
+        });
+    </script>
+</body>
+
+</html>

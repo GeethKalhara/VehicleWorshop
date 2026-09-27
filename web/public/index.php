@@ -27,8 +27,12 @@ $controllers = require __DIR__ . '/../config/services/controllers.php';
  *  context: array<string, mixed>
  * }>
  */
-$routes = require __DIR__ . '/../config/routes/dummy.php';
-
+$routes = [
+    ...(require __DIR__ . '/../config/routes/dummy.php'),
+    ...(require __DIR__ . '/../config/routes/auth.php'),
+    ...(require __DIR__ . '/../config/routes/customer.php'),
+    ...(require __DIR__ . '/../config/routes/staff.php'),
+];
 
 $app = new AppBuilder()
     ->addControllers($controllers)

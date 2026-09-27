@@ -1,0 +1,2208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Appointments - VWMS Customer Portal</title>
+    <meta name="description"
+        content="View, manage, and book upcoming or past maintenance appointments on VWMS Customer Portal.">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F97316',
+                            'orange-hover': '#EA580C',
+                            'orange-light': '#FFF7ED',
+                            'orange-border': '#FFEDD5',
+                        },
+                        navy: {
+                            sidebar: '#0D131F',
+                            surface: '#111827',
+                            highlight: '#1E293B',
+                            hover: '#182133',
+                        },
+                        slate: {
+                            heading: '#0F172A',
+                            body: '#64748B',
+                            subtle: '#94A3B8',
+                            border: '#E2E8F0',
+                            bg: '#F8FAFC',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'soft': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02)',
+                        'card': '0 1px 3px 0 rgba(15, 23, 42, 0.05)',
+                        'modal': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Micro-styling & Keyframes -->
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        @keyframes pulseDot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.4;
+                transform: scale(0.85);
+            }
+        }
+
+        .pulse-active {
+            animation: pulseDot 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-[#F8FAFC] text-slate-700 font-sans min-h-screen flex flex-col antialiased selection:bg-orange-500 selection:text-white">
+
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div id="sidebarBackdrop"
+        class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden transition-opacity duration-300 lg:hidden"
+        onclick="toggleMobileSidebar(false)"></div>
+
+    <!-- Main Application Shell -->
+    <div class="flex-1 flex min-h-screen">
+
+        <!-- ======================================================== -->
+        <!-- SIDEBAR NAVIGATION                                       -->
+        <!-- ======================================================== -->
+        <aside id="sidebar"
+            class="fixed top-0 bottom-0 left-0 w-64 lg:w-[260px] bg-[#0D131F] text-white z-50 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:z-auto">
+
+            <!-- Top Section: Brand Logo & Navigation -->
+            <div class="flex flex-col">
+                <!-- Brand Header -->
+                <div class="px-6 py-6 border-b border-slate-800/60 flex items-center justify-between">
+                    <a href="/customer/dashboard" class="flex items-center gap-3 group">
+                        <!-- Orange Brand Icon -->
+                        <div
+                            class="w-9 h-9 rounded-xl bg-orange-500 flex items-center justify-center shadow-lg shadow-orange-500/25 group-hover:scale-105 transition-transform duration-200">
+                            <svg class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+                        </div>
+                        <!-- Logo Typography -->
+                        <div class="flex flex-col">
+                            <span class="text-white font-bold text-base tracking-tight leading-none">VWMS</span>
+                            <span
+                                class="text-[10px] text-slate-400 font-semibold tracking-wider uppercase mt-1 leading-none">CUSTOMER
+                                PORTAL</span>
+                        </div>
+                    </a>
+
+                    <!-- Close Button on Mobile Drawer -->
+                    <button type="button" class="lg:hidden text-slate-400 hover:text-white p-1"
+                        onclick="toggleMobileSidebar(false)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation Links List -->
+                <nav class="px-4 py-5 space-y-1" aria-label="Customer Navigation">
+                    <!-- Category Header -->
+                    <div class="px-3 pb-2 text-[11px] font-semibold text-slate-400 tracking-wider uppercase">
+                        OPERATIONS
+                    </div>
+
+                    <!-- 1. Overview -->
+                    <a href="/customer/dashboard"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40 font-medium text-sm transition-colors duration-150 group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                        </svg>
+                        <span>Overview</span>
+                    </a>
+
+                    <!-- 2. My Vehicles -->
+                    <a href="/customer/vehicles"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40 font-medium text-sm transition-colors duration-150 group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-5.16.86a1 1 0 0 0-.84.99V16h3">
+                            </path>
+                            <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                            <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                        </svg>
+                        <span>My Vehicles</span>
+                    </a>
+
+                    <!-- 3. Appointments (Active) -->
+                    <a href="/customer/appointments"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 text-orange-500 font-medium text-sm transition-all duration-150 relative group">
+                        <!-- Active Indicator Glow -->
+                        <span
+                            class="w-1.5 h-4 bg-orange-500 rounded-full absolute left-0 top-1/2 -translate-y-1/2 shadow-[0_0_8px_#F97316]"></span>
+                        <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <span>Appointments</span>
+                    </a>
+
+                    <!-- 4. Service History -->
+                    <a href="/customer/service-history"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40 font-medium text-sm transition-colors duration-150 group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <span>Service History</span>
+                    </a>
+
+                    <!-- 5. Invoices -->
+                    <a href="dashboard.html#invoices"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40 font-medium text-sm transition-colors duration-150 group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span>Invoices</span>
+                    </a>
+
+                    <!-- 6. Profile -->
+                    <a href="/customer/profile"
+                        class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/40 font-medium text-sm transition-colors duration-150 group">
+                        <svg class="w-5 h-5 text-slate-400 group-hover:text-white" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span>Profile</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Bottom Support / Sign Out Link -->
+            <div class="p-4 border-t border-slate-800/60">
+                <a href="/login"
+                    class="flex items-center gap-3 px-3 py-2 text-xs text-slate-400 hover:text-white rounded-lg hover:bg-slate-800/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                        </path>
+                    </svg>
+                    <span>Log Out of Portal</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ======================================================== -->
+        <!-- MAIN CONTENT AREA                                        -->
+        <!-- ======================================================== -->
+        <div class="flex-1 flex flex-col min-w-0">
+
+            <!-- Top Header Utility Bar -->
+            <header
+                class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between gap-4">
+
+                <!-- Left: Mobile Toggle & Breadcrumbs -->
+                <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                    <!-- Hamburger button on Mobile -->
+                    <button type="button"
+                        class="lg:hidden p-1.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+                        onclick="toggleMobileSidebar(true)" aria-label="Open navigation menu">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Breadcrumbs -->
+                    <nav class="flex items-center text-sm font-medium text-slate-500 whitespace-nowrap">
+                        <a href="/customer/dashboard" class="hover:text-slate-700 transition-colors">Dashboard</a>
+                        <svg class="w-4 h-4 mx-2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                        <span class="text-slate-900 font-semibold">Appointments</span>
+                    </nav>
+                </div>
+
+                <!-- Center: Search Input Bar with Command-K indicator -->
+                <div class="flex-1 max-w-md mx-2 sm:mx-4">
+                    <div class="relative">
+                        <span
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </span>
+                        <input type="text" id="globalSearchInput" placeholder="Search license plate"
+                            class="w-full pl-9 pr-12 py-1.5 sm:py-2 text-xs sm:text-sm bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all shadow-sm">
+                        <span class="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none">
+                            <kbd
+                                class="text-[10px] text-slate-400 font-mono bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded shadow-xs">⌘K</kbd>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Right: Notifications & Profile -->
+                <div class="flex items-center gap-2 sm:gap-4 shrink-0">
+
+                    <!-- Notification Bell -->
+                    <button type="button"
+                        class="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 relative transition-colors"
+                        aria-label="View notifications">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                        <!-- Orange Unread Dot Indicator -->
+                        <span
+                            class="absolute top-2 right-2 w-2 h-2 bg-orange-500 rounded-full ring-2 ring-white"></span>
+                    </button>
+
+                    <!-- Client Profile Badge & Dropdown -->
+                    <div class="relative">
+                        <button type="button" id="profileDropdownBtn" onclick="toggleProfileDropdown()"
+                            class="flex items-center gap-2.5 pl-1 sm:pl-2 cursor-pointer group focus:outline-none">
+                            <!-- Avatar with Status Dot -->
+                            <div class="relative">
+                                <div
+                                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#9A3412] text-white flex items-center justify-center font-semibold text-xs sm:text-sm shadow-sm overflow-hidden">
+                                    <svg class="w-5 h-5 text-amber-100/90" fill="currentColor" viewBox="0 0 24 24">
+                                        <path fill-rule="evenodd"
+                                            d="M12 2a5 5 0 100 10 5 5 0 000-10zM4 20a8 8 0 0116 0v1H4v-1z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full"></span>
+                            </div>
+
+                            <!-- Name & Role -->
+                            <div class="hidden sm:flex flex-col text-left leading-tight">
+                                <span
+                                    class="text-sm font-semibold text-slate-900 group-hover:text-orange-600 transition-colors">Kasun</span>
+                                <span class="text-[11px] text-slate-400 font-medium">Client</span>
+                            </div>
+
+                            <svg class="hidden sm:block w-3.5 h-3.5 text-slate-400 group-hover:text-slate-600 transition-transform group-hover:translate-y-0.5"
+                                fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Profile Dropdown Menu -->
+                        <div id="profileMenu"
+                            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-50 text-xs text-slate-700">
+                            <div class="px-3.5 py-2 border-b border-slate-100">
+                                <div class="font-semibold text-slate-900">Kasun Jayawardena</div>
+                                <div class="text-[11px] text-slate-400 truncate">kasun@example.com</div>
+                            </div>
+                            <a href="/customer/profile"
+                                class="flex items-center gap-2 px-3.5 py-2 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <span>My Account</span>
+                            </a>
+                            <a href="/login"
+                                class="flex items-center gap-2 px-3.5 py-2 text-rose-600 hover:bg-rose-50 transition-colors border-t border-slate-100">
+                                <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                                    </path>
+                                </svg>
+                                <span>Sign Out</span>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </header>
+
+            <!-- Main Page Content Canvas -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+
+                <!-- ======================================================== -->
+                <!-- PAGE TITLE & PRIMARY CALL TO ACTION                      -->
+                <!-- ======================================================== -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Appointments</h1>
+                        <p class="text-sm text-slate-500 mt-1">Manage confirmed service bookings and workshop
+                            schedule.</p>
+                    </div>
+
+                    <!-- Primary Action Button: + Book Service -->
+                    <button type="button" id="bookAppointmentBtn" onclick="openBookingModal()"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 active:translate-y-0.5 text-white font-semibold text-sm shadow-sm shadow-orange-500/20 transition-all duration-150 shrink-0">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        <span>+ Book Service</span>
+                    </button>
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- METRIC KPI CARDS (3 CARDS IN ROW)                        -->
+                <!-- ======================================================== -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
+
+                    <!-- Metric Card 1: Scheduled Today -->
+                    <div
+                        class="bg-white rounded-2xl p-5 border border-slate-200 shadow-card flex items-center justify-between group hover:border-slate-300 transition-all duration-200">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                SCHEDULED TODAY
+                            </div>
+                            <div class="text-3xl font-bold text-slate-900 mt-1">
+                                0
+                            </div>
+                        </div>
+                        <!-- Soft Orange Calendar Icon Box -->
+                        <div
+                            class="w-12 h-12 rounded-xl bg-orange-50 border border-orange-100 flex items-center justify-center text-orange-500 shrink-0">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 2: Upcoming Bookings -->
+                    <div
+                        class="bg-white rounded-2xl p-5 border border-slate-200 shadow-card flex items-center justify-between group hover:border-slate-300 transition-all duration-200">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                UPCOMING BOOKINGS
+                            </div>
+                            <div class="text-3xl font-bold text-slate-900 mt-1">
+                                1
+                            </div>
+                        </div>
+                        <!-- Soft Blue Clock Icon Box -->
+                        <div
+                            class="w-12 h-12 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-500 shrink-0">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Metric Card 3: Serviced This Year -->
+                    <div
+                        class="bg-white rounded-2xl p-5 border border-slate-200 shadow-card flex items-center justify-between group hover:border-slate-300 transition-all duration-200">
+                        <div>
+                            <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                SERVICED THIS YEAR
+                            </div>
+                            <div class="text-3xl font-bold text-slate-900 mt-1">
+                                1
+                            </div>
+                        </div>
+                        <!-- Soft Green Checkmark Icon Box -->
+                        <div
+                            class="w-12 h-12 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-500 shrink-0">
+                            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- APPOINTMENTS TABLE & FILTER PANEL                        -->
+                <!-- ======================================================== -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-card overflow-hidden">
+
+                    <!-- Filter Bar Header -->
+                    <div
+                        class="p-4 sm:p-5 border-b border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+                        <!-- Left: Status Tabs Filter -->
+                        <div class="flex items-center gap-1 sm:gap-2 overflow-x-auto pb-1 md:pb-0" id="filterTabs">
+                            <!-- All Appointments Tab (Active) -->
+                            <button type="button" onclick="filterAppointments('all', this)"
+                                class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-200/60 shadow-xs whitespace-nowrap transition-colors">
+                                All Appointments <span class="ml-1 opacity-90">(2)</span>
+                            </button>
+
+                            <!-- Upcoming Tab -->
+                            <button type="button" onclick="filterAppointments('upcoming', this)"
+                                class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 whitespace-nowrap transition-colors">
+                                Upcoming <span class="ml-1 text-slate-400">(1)</span>
+                            </button>
+
+                            <!-- Completed Tab -->
+                            <button type="button" onclick="filterAppointments('completed', this)"
+                                class="tab-btn px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 whitespace-nowrap transition-colors">
+                                Completed <span class="ml-1 text-slate-400">(1)</span>
+                            </button>
+                        </div>
+
+                        <!-- Right: Search Filter Input & Export Button -->
+                        <div class="flex items-center gap-2.5">
+                            <div class="relative flex-1 sm:w-64">
+                                <span
+                                    class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                                    </svg>
+                                </span>
+                                <input type="text" id="tableFilterInput" onkeyup="searchAppointments()"
+                                    placeholder="Filter by vehicle or code..."
+                                    class="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50/80 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:bg-white focus:ring-1 focus:ring-orange-500/20 transition-all">
+                            </div>
+
+                            <!-- Export Action Button -->
+                            <button type="button" onclick="exportAppointments()" title="Export appointments"
+                                class="p-2 rounded-lg border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="7 10 12 15 17 10"></polyline>
+                                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Appointments Data Table (Desktop & Tablet) -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="appointmentsTable">
+                            <thead>
+                                <tr
+                                    class="border-b border-slate-100 bg-slate-50/40 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                                    <th scope="col" class="py-3 px-5 sm:px-6">Date</th>
+                                    <th scope="col" class="py-3 px-5 sm:px-6">Vehicle</th>
+                                    <th scope="col" class="py-3 px-5 sm:px-6">Status</th>
+                                    <th scope="col" class="py-3 px-5 sm:px-6 text-right sm:text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-sm">
+
+                                <!-- ROW 1: Upcoming Appointment (Oct 12, 2026) -->
+                                <tr id="appointment-row-1"
+                                    class="appointment-row hover:bg-slate-50/70 transition-colors"
+                                    data-id="appointment-row-1" data-ref="#WP-84920"
+                                    data-vehicle="2018 Toyota Axio (WP CBA-4321)" data-date="Oct 12, 2026"
+                                    data-bay="Bay #02 (Express Bay)"
+                                    data-note="Periodic 40,000 km standard service, slight brake vibration at highway speeds, inspect front brake pads and rotate tires."
+                                    data-status="upcoming" data-search="2018 toyota axio wp cba-4321 oct 12 #wp-84920">
+                                    <!-- Date -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-9 h-9 rounded-lg bg-blue-50/60 border border-blue-100/60 text-blue-600 flex items-center justify-center shrink-0">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                            </div>
+                                            <span class="font-semibold text-slate-900 text-sm row-date-display">Oct 12, 2026</span>
+                                        </div>
+                                    </td>
+
+                                    <!-- Vehicle -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <div class="font-semibold text-slate-900 text-sm">2018 Toyota Axio</div>
+                                        <div class="mt-1">
+                                            <span
+                                                class="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px] font-medium tracking-wide">
+                                                WP CBA-4321
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <!-- Status -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                            Upcoming
+                                        </span>
+                                    </td>
+
+                                    <!-- Action -->
+                                    <td class="py-4 px-5 sm:px-6 text-right sm:text-center relative">
+                                        <div class="inline-block text-left relative">
+                                            <button type="button" onclick="toggleActionMenu('menu-row-1', event)"
+                                                class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="1.5"></circle>
+                                                    <circle cx="12" cy="5" r="1.5"></circle>
+                                                    <circle cx="12" cy="19" r="1.5"></circle>
+                                                </svg>
+                                            </button>
+                                            <!-- Action Popup Menu -->
+                                            <div id="menu-row-1"
+                                                class="action-dropdown hidden absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-40 text-xs text-slate-700 text-left">
+                                                <button type="button"
+                                                    onclick="openViewAppointmentModal('appointment-row-1')"
+                                                    class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                    <span>View Details</span>
+                                                </button>
+                                                <button type="button" onclick="openRescheduleModal('appointment-row-1')"
+                                                    class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    </svg>
+                                                    <span>Reschedule</span>
+                                                </button>
+                                                <button type="button"
+                                                    onclick="openCancelConfirmModal('appointment-row-1')"
+                                                    class="w-full flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 transition-colors border-t border-slate-100">
+                                                    <svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                                    </svg>
+                                                    <span>Cancel Appointment</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- ROW 2: Completed Appointment (Sep 01, 2026) -->
+                                <tr id="appointment-row-2"
+                                    class="appointment-row hover:bg-slate-50/70 transition-colors"
+                                    data-id="appointment-row-2" data-ref="#WP-73210"
+                                    data-vehicle="2015 Honda Fit (NW WP-9876)" data-date="Sep 01, 2026"
+                                    data-bay="Bay #04 (Mechanical Bay)"
+                                    data-note="Front ceramic brake pad replacement and rotor skimming. Customer reported squeaking noise during deceleration."
+                                    data-status="completed" data-search="2015 honda fit nw wp-9876 sep 01 #wp-73210">
+                                    <!-- Date -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <div class="flex items-center gap-3">
+                                            <div
+                                                class="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
+                                                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                                                </svg>
+                                            </div>
+                                            <span class="font-semibold text-slate-900 text-sm row-date-display">Sep 01, 2026</span>
+                                        </div>
+                                    </td>
+
+                                    <!-- Vehicle -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <div class="font-semibold text-slate-900 text-sm">2015 Honda Fit</div>
+                                        <div class="mt-1">
+                                            <span
+                                                class="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px] font-medium tracking-wide">
+                                                NW WP-9876
+                                            </span>
+                                        </div>
+                                    </td>
+
+                                    <!-- Status -->
+                                    <td class="py-4 px-5 sm:px-6">
+                                        <span
+                                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Completed
+                                        </span>
+                                    </td>
+
+                                    <!-- Action -->
+                                    <td class="py-4 px-5 sm:px-6 text-right sm:text-center relative">
+                                        <div class="inline-block text-left relative">
+                                            <button type="button" onclick="toggleActionMenu('menu-row-2', event)"
+                                                class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor"
+                                                    viewBox="0 0 24 24">
+                                                    <circle cx="12" cy="12" r="1.5"></circle>
+                                                    <circle cx="12" cy="5" r="1.5"></circle>
+                                                    <circle cx="12" cy="19" r="1.5"></circle>
+                                                </svg>
+                                            </button>
+                                            <!-- Action Popup Menu -->
+                                            <div id="menu-row-2"
+                                                class="action-dropdown hidden absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-40 text-xs text-slate-700 text-left">
+                                                <button type="button"
+                                                    onclick="openViewAppointmentModal('appointment-row-2')"
+                                                    class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                        <circle cx="12" cy="12" r="3"></circle>
+                                                    </svg>
+                                                    <span>View Details</span>
+                                                </button>
+                                                <a href="dashboard.html#invoices"
+                                                    class="flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                                    <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <path
+                                                            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z">
+                                                        </path>
+                                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                                    </svg>
+                                                    <span>View Invoice</span>
+                                                </a>
+                                                <button type="button" onclick="openBookingModal('repeat')"
+                                                    class="w-full flex items-center gap-2 px-3 py-2 text-orange-600 hover:bg-orange-50 transition-colors border-t border-slate-100">
+                                                    <svg class="w-4 h-4 text-orange-500" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2">
+                                                        <polyline points="23 4 23 10 17 10"></polyline>
+                                                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                                                    </svg>
+                                                    <span>Book Service Again</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Footer: Count & Pagination -->
+                    <div
+                        class="px-5 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+                        <div id="tableCountText" class="font-medium">
+                            Showing <span class="font-semibold text-slate-800" id="currentVisibleCount">2</span> of
+                            <span class="font-semibold text-slate-800">2</span> appointments
+                        </div>
+
+                        <!-- Pagination Controls -->
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" disabled
+                                class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-400 text-xs font-medium cursor-not-allowed bg-slate-50/50">
+                                Previous
+                            </button>
+                            <button type="button"
+                                class="w-7 h-7 rounded-lg bg-orange-500 text-white font-semibold flex items-center justify-center text-xs shadow-xs">
+                                1
+                            </button>
+                            <button type="button" disabled
+                                class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-400 text-xs font-medium cursor-not-allowed bg-slate-50/50">
+                                Next
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ======================================================== -->
+                <!-- BOTTOM BANNER: URGENT INSPECTION / ROADSIDE RECOVERY     -->
+                <!-- ======================================================== -->
+                <div
+                    class="bg-white rounded-2xl p-5 border border-slate-200 shadow-card flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="flex items-center gap-3.5">
+                        <!-- Orange Info Exclamation Icon -->
+                        <div
+                            class="w-10 h-10 rounded-full bg-orange-50 border border-orange-200 flex items-center justify-center text-orange-500 shrink-0">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="16" x2="12" y2="12"></line>
+                                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                            </svg>
+                        </div>
+                        <span class="text-sm sm:text-base font-semibold text-slate-900 leading-snug">
+                            Need urgent inspection or roadside recovery?
+                        </span>
+                    </div>
+
+                    <!-- Navy Contact Workshop Action Button -->
+                    <button type="button" onclick="openContactModal()"
+                        class="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#0D131F] hover:bg-slate-800 text-white font-semibold text-sm shadow-sm transition-all duration-150 shrink-0 active:translate-y-0.5">
+                        <svg class="w-4 h-4 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                        <span>Contact Workshop</span>
+                    </button>
+                </div>
+
+            </main>
+
+            <!-- Bottom Sticky Navigation Bar for Mobile (< lg) -->
+            <nav
+                class="lg:hidden sticky bottom-0 bg-white border-t border-slate-200 px-4 py-2 flex items-center justify-around z-30 shadow-lg">
+                <a href="/customer/dashboard"
+                    class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+                        <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+                        <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+                    </svg>
+                    <span>Overview</span>
+                </a>
+                <a href="/customer/vehicles"
+                    class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path
+                            d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-5.16.86a1 1 0 0 0-.84.99V16h3">
+                        </path>
+                        <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                        <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                    </svg>
+                    <span>Vehicles</span>
+                </a>
+                <button type="button" onclick="openBookingModal()" class="flex flex-col items-center gap-1 -mt-4">
+                    <div
+                        class="w-11 h-11 rounded-full bg-orange-500 text-white flex items-center justify-center shadow-lg shadow-orange-500/30">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                    </div>
+                    <span class="text-[10px] font-semibold text-orange-600">Book</span>
+                </button>
+                <a href="/customer/appointments"
+                    class="flex flex-col items-center gap-1 text-orange-600 font-semibold text-[11px]">
+                    <svg class="w-5 h-5 text-orange-600" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>Appts</span>
+                </a>
+                <a href="dashboard.html#invoices"
+                    class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    </svg>
+                    <span>Invoices</span>
+                </a>
+                <a href="/customer/profile"
+                    class="flex flex-col items-center gap-1 text-slate-500 hover:text-slate-800 text-[11px] font-medium">
+                    <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>Profile</span>
+                </a>
+            </nav>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- INTERACTIVE SERVICE BOOKING MODAL                        -->
+    <!-- ======================================================== -->
+    <div id="bookingModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-6 bg-slate-950/60 backdrop-blur-sm transition-all duration-200">
+        <div
+            class="bg-white rounded-2xl max-w-4xl w-full shadow-2xl border border-slate-200/80 relative overflow-hidden flex flex-col max-h-[92vh]">
+
+            <!-- Modal Header -->
+            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200/70 text-orange-500 flex items-center justify-center shadow-xs shrink-0">
+                        <svg class="w-5 h-5 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">Book New
+                            Appointment</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Select vehicle and reserve slot</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeBookingModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body (Two-Column Layout Matching Screenshot) -->
+            <div class="p-6 overflow-y-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+
+                <!-- Left Column (7 cols): Select Date & Intake Slot + Calendar + Time Slots -->
+                <div class="lg:col-span-7 flex flex-col lg:border-r lg:border-slate-100 lg:pr-8">
+
+                    <!-- Section Header with Operating Hours Badge -->
+                    <div class="flex items-center justify-between gap-2 mb-3">
+                        <h3 class="text-sm font-semibold text-slate-900">Select Date</h3>
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                            Operating Hours: 08:00 - 18:00
+                        </span>
+                    </div>
+
+                    <!-- Mini Calendar Component Box -->
+                    <div class="border border-slate-200/80 rounded-xl p-4 bg-white shadow-xs">
+                        <!-- Calendar Header: Month + Prev/Next -->
+                        <div class="flex items-center justify-between mb-3.5 px-1">
+                            <span id="calendarMonthLabel" class="text-sm font-bold text-slate-900">October 2026</span>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="changeCalendarMonth(-1)"
+                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                                    aria-label="Previous month">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <polyline points="15 18 9 12 15 6"></polyline>
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="changeCalendarMonth(1)"
+                                    class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                                    aria-label="Next month">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <polyline points="9 5 7 7 12 15 17 10"></polyline>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Days of Week Header -->
+                        <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                            <span class="text-[11px] font-semibold text-slate-400">MO</span>
+                            <span class="text-[11px] font-semibold text-slate-400">TU</span>
+                            <span class="text-[11px] font-semibold text-slate-400">WE</span>
+                            <span class="text-[11px] font-semibold text-slate-400">TH</span>
+                            <span class="text-[11px] font-semibold text-slate-400">FR</span>
+                            <span class="text-[11px] font-semibold text-slate-400">SA</span>
+                            <span class="text-[11px] font-semibold text-slate-400">SU</span>
+                        </div>
+
+                        <!-- Calendar Dates Grid -->
+                        <div class="grid grid-cols-7 gap-1 text-center text-xs" id="calendarDaysGrid">
+                            <!-- Prev Month Greyed Out -->
+                            <button type="button"
+                                class="py-2 rounded-lg text-slate-300 font-medium cursor-default">28</button>
+                            <button type="button"
+                                class="py-2 rounded-lg text-slate-300 font-medium cursor-default">29</button>
+                            <button type="button"
+                                class="py-2 rounded-lg text-slate-300 font-medium cursor-default">30</button>
+
+                            <!-- October Days -->
+                            <button type="button" onclick="selectCalendarDate(1)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="1">1</button>
+                            <button type="button" onclick="selectCalendarDate(2)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="2">2</button>
+                            <button type="button" onclick="selectCalendarDate(3)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="3">3</button>
+                            <button type="button" onclick="selectCalendarDate(4)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="4">4</button>
+                            <button type="button" onclick="selectCalendarDate(5)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="5">5</button>
+                            <button type="button" onclick="selectCalendarDate(6)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="6">6</button>
+                            <button type="button" onclick="selectCalendarDate(7)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="7">7</button>
+                            <button type="button" onclick="selectCalendarDate(8)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="8">8</button>
+                            <button type="button" onclick="selectCalendarDate(9)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="9">9</button>
+                            <button type="button" onclick="selectCalendarDate(10)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="10">10</button>
+                            <button type="button" onclick="selectCalendarDate(11)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="11">11</button>
+                            <button type="button" onclick="selectCalendarDate(12)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="12">12</button>
+                            <button type="button" onclick="selectCalendarDate(13)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="13">13</button>
+                            <button type="button" onclick="selectCalendarDate(14)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="14">14</button>
+                            <button type="button" onclick="selectCalendarDate(15)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="15">15</button>
+                            <button type="button" onclick="selectCalendarDate(16)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="16">16</button>
+                            <button type="button" onclick="selectCalendarDate(17)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="17">17</button>
+                            <button type="button" onclick="selectCalendarDate(18)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="18">18</button>
+                            <button type="button" onclick="selectCalendarDate(19)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="19">19</button>
+                            <button type="button" onclick="selectCalendarDate(20)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="20">20</button>
+                            <button type="button" onclick="selectCalendarDate(21)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="21">21</button>
+                            <button type="button" onclick="selectCalendarDate(22)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="22">22</button>
+                            <button type="button" onclick="selectCalendarDate(23)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="23">23</button>
+                            <!-- Day 24 Selected (Default) -->
+                            <button type="button" onclick="selectCalendarDate(24)"
+                                class="cal-day py-2 rounded-lg bg-orange-500 text-white font-bold shadow-sm transition-all"
+                                data-day="24">24</button>
+                            <button type="button" onclick="selectCalendarDate(25)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="25">25</button>
+                            <button type="button" onclick="selectCalendarDate(26)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="26">26</button>
+                            <button type="button" onclick="selectCalendarDate(27)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="27">27</button>
+                            <button type="button" onclick="selectCalendarDate(28)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="28">28</button>
+                            <button type="button" onclick="selectCalendarDate(29)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="29">29</button>
+                            <button type="button" onclick="selectCalendarDate(30)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="30">30</button>
+                            <button type="button" onclick="selectCalendarDate(31)"
+                                class="cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors"
+                                data-day="31">31</button>
+                            <!-- Next Month Greyed Out -->
+                            <button type="button"
+                                class="py-2 rounded-lg text-slate-300 font-medium cursor-default">1</button>
+                        </div>
+                    </div>
+
+                    <!-- Anytime Drop-Off Notice during Opening Hours -->
+                    <div
+                        class="mt-4 p-3.5 bg-emerald-50/70 rounded-xl border border-emerald-200/80 flex items-start gap-2.5 text-xs text-emerald-800">
+                        <svg class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <div>
+                            <span class="font-bold">Anytime during opening hours:</span>
+                            <p class="text-emerald-700 mt-0.5">No specific time slot needed. You can bring your vehicle
+                                in anytime between <strong>08:00 AM and 06:00 PM</strong> on the selected date.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right Column (5 cols): Description & Specific Concerns -->
+                <div class="lg:col-span-5 flex flex-col justify-between">
+                    <div>
+                        <!-- Section Heading -->
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="text-sm font-semibold text-slate-900">Description &amp; Specific Concerns</h3>
+                        </div>
+
+                        <!-- Specific Concerns Textarea Matching Screenshot Placeholder -->
+                        <textarea id="modalBookingConcerns" rows="7"
+                            placeholder="Please describe any specific issues (e.g. slight brake vibration at highway speeds, AC filter replacement)..."
+                            class="w-full p-4 text-xs sm:text-sm bg-white border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all resize-none h-44 sm:h-52"></textarea>
+
+                        <!-- Selected Vehicle Badge / Selector -->
+                        <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                            <label for="modalVehicleSelect"
+                                class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Select
+                                Vehicle</label>
+                            <select id="modalVehicleSelect"
+                                class="w-full px-3 py-1.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 font-medium focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500/20">
+                                <option value="2018 Toyota Axio (WP CBA-4321)">2018 Toyota Axio (WP CBA-4321)</option>
+                                <option value="2015 Honda Fit (NW WP-9876)">2015 Honda Fit (NW WP-9876)</option>
+                                <option value="Toyota Land Cruiser Prado (WP CAB-7892)">Toyota Land Cruiser Prado (WP
+                                    CAB-7892)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Helpful Notice -->
+                    <div
+                        class="mt-4 p-3 bg-orange-50/50 rounded-xl border border-orange-100 flex items-start gap-2.5 text-xs text-slate-600">
+                        <svg class="w-4 h-4 text-orange-500 mt-0.5 shrink-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span>Drive in anytime during operating hours (08:00 - 18:00) on your booked date.</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-white border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeBookingModal()"
+                    class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-slate-50 transition-colors">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmAppointmentBooking()"
+                    class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:translate-y-0.5 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm shadow-orange-500/20 transition-all">
+                    <span>Confirm Booking</span>
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- BOOKING SUCCESS MODAL                                    -->
+    <!-- ======================================================== -->
+    <div id="bookingSuccessModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm transition-all duration-200">
+        <div
+            class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200/80 relative overflow-hidden flex flex-col p-6 sm:p-7 text-center animate-fade-in">
+
+            <!-- Success Icon Animation -->
+            <div
+                class="w-16 h-16 rounded-full bg-emerald-50 border-2 border-emerald-500 text-emerald-600 mx-auto flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-4 animate-bounce-subtle">
+                <svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+
+            <div
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mx-auto mb-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Appointment Confirmed
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Booking Confirmed!</h2>
+            <p class="text-xs text-slate-500 mt-1">Your workshop intake bay has been secured. A confirmation SMS with
+                tracking link has been sent to your phone.</p>
+
+            <!-- Booking Confirmation Card -->
+            <div class="mt-5 p-4 rounded-xl bg-slate-50 border border-slate-200/80 text-left space-y-2.5 text-xs">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-200/70">
+                    <span class="text-slate-400 font-medium">Booking Reference</span>
+                    <span class="font-mono font-bold text-orange-600 text-sm" id="successBookingRef">#WP-84920</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Vehicle</span>
+                    <span class="font-semibold text-slate-900" id="successVehicle">2018 Toyota Axio (WP CBA-4321)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Scheduled Date</span>
+                    <span class="font-semibold text-slate-900" id="successDateTime">October 24, 2026 (08:00 -
+                        18:00)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Workshop Location</span>
+                    <span class="font-medium text-slate-700">Baseline Rd, Colombo 09</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="mt-6 flex flex-col sm:flex-row items-center gap-2.5">
+                <button type="button" onclick="closeSuccessModal()"
+                    class="w-full sm:flex-1 py-2.5 px-4 rounded-xl bg-orange-500 hover:bg-orange-600 active:translate-y-0.5 text-white font-semibold text-xs sm:text-sm shadow-sm shadow-orange-500/20 transition-all">
+                    View in Appointments
+                </button>
+                <button type="button" onclick="downloadBookingPass()"
+                    class="w-full sm:w-auto py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition-colors flex items-center justify-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>Pass</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- VIEW APPOINTMENT MODAL                                   -->
+    <!-- Displays vehicle, date, and notes kept                   -->
+    <!-- ======================================================== -->
+    <div id="viewAppointmentModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm transition-all duration-200">
+        <div
+            class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200/80 relative overflow-hidden flex flex-col animate-fade-in">
+
+            <!-- Modal Header -->
+            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200/60 text-orange-500 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+                            Appointment Details</h2>
+                        <div class="flex items-center gap-2 mt-0.5">
+                            <span id="viewModalRef"
+                                class="font-mono text-xs font-bold text-orange-600 bg-orange-50 px-2 py-0.5 rounded border border-orange-200/60">#WP-84920</span>
+                            <span id="viewModalStatus"
+                                class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">Upcoming</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" onclick="closeViewAppointmentModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                <!-- Vehicle Info Card -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span
+                        class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Vehicle</span>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div id="viewModalVehicleName" class="text-sm font-bold text-slate-900">2018 Toyota Axio
+                            </div>
+                            <div id="viewModalPlate"
+                                class="inline-block mt-1 font-mono text-xs font-semibold px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
+                                WP CBA-4321</div>
+                        </div>
+                        <div
+                            class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-600 shrink-0">
+                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H8.5a1 1 0 0 0-.8.4L5 11l-5.16.86a1 1 0 0 0-.84.99V16h3">
+                                </path>
+                                <circle cx="6.5" cy="16.5" r="2.5"></circle>
+                                <circle cx="16.5" cy="16.5" r="2.5"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Details Card -->
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <span
+                        class="text-[10px] font-semibold uppercase tracking-wider text-slate-400 block mb-0.5">Scheduled
+                        Date</span>
+                    <div id="viewModalDateTime" class="text-xs sm:text-sm font-bold text-slate-900">Oct 12, 2026</div>
+                </div>
+
+                <!-- Description -->
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <svg class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        <span class="text-xs font-bold text-slate-900 tracking-tight">Description</span>
+                    </div>
+                    <p id="viewModalNotes"
+                        class="text-xs text-slate-700 leading-relaxed bg-white p-3 rounded-lg border border-slate-200/70 whitespace-pre-wrap">
+                        Periodic 40,000 km standard service, slight brake vibration at highway speeds, inspect front
+                        brake pads and rotate tires.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2" id="viewModalUpcomingActions">
+                    <button type="button" onclick="triggerRescheduleFromView()"
+                        class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-xs">
+                        <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                        </svg>
+                        <span>Reschedule</span>
+                    </button>
+                    <button type="button" onclick="triggerCancelFromView()"
+                        class="px-3.5 py-2 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-semibold transition-colors flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        <span>Cancel</span>
+                    </button>
+                </div>
+                <button type="button" onclick="closeViewAppointmentModal()"
+                    class="ml-auto px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition-colors">
+                    Done
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- CANCEL APPOINTMENT CONFIRMATION MODAL                    -->
+    <!-- Simple confirmation screen with cancel and back button   -->
+    <!-- ======================================================== -->
+    <div id="cancelConfirmModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm transition-all duration-200">
+        <div
+            class="bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-200/80 relative overflow-hidden flex flex-col p-6 sm:p-7 text-center animate-fade-in">
+
+            <!-- Warning Icon -->
+            <div
+                class="w-14 h-14 rounded-full bg-rose-50 border-2 border-rose-200 text-rose-600 mx-auto flex items-center justify-center shadow-lg shadow-rose-500/10 mb-4">
+                <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="15" y1="9" x2="9" y2="15"></line>
+                    <line x1="9" y1="9" x2="15" y2="15"></line>
+                </svg>
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Cancel Appointment?</h2>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+                Are you sure you want to cancel this scheduled appointment? Your reserved intake bay will be released
+                for other customers.
+            </p>
+
+            <!-- Appointment Context Card -->
+            <div class="mt-4 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-left space-y-2 text-xs">
+                <div class="flex items-center justify-between pb-1.5 border-b border-slate-200/60">
+                    <span class="text-slate-400 font-medium">Booking Reference</span>
+                    <span id="cancelModalRefText" class="font-mono font-bold text-orange-600 text-xs">#WP-84920</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Vehicle</span>
+                    <span id="cancelModalVehicleText" class="font-bold text-slate-900">2018 Toyota Axio (WP
+                        CBA-4321)</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-slate-500">Scheduled Date</span>
+                    <span id="cancelModalDateTimeText" class="font-semibold text-slate-800">Oct 12, 2026</span>
+                </div>
+            </div>
+
+            <!-- Two Buttons: Back & Cancel Appointment -->
+            <div class="mt-6 flex items-center justify-center gap-3">
+                <button type="button" onclick="closeCancelConfirmModal()"
+                    class="flex-1 py-2.5 px-4 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition-colors">
+                    Back
+                </button>
+                <button type="button" onclick="executeCancelAppointment()"
+                    class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 active:translate-y-0.5 text-white font-semibold text-xs sm:text-sm shadow-sm shadow-rose-600/20 transition-all">
+                    Cancel Appointment
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- RESCHEDULE APPOINTMENT MODAL                             -->
+    <!-- Edit date                                                -->
+    <!-- ======================================================== -->
+    <div id="rescheduleAppointmentModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/65 backdrop-blur-sm transition-all duration-200">
+        <div
+            class="bg-white rounded-2xl max-w-lg w-full shadow-2xl border border-slate-200/80 relative overflow-hidden flex flex-col animate-fade-in">
+
+            <!-- Header -->
+            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 rounded-xl bg-orange-50 border border-orange-200/60 text-orange-500 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-900 tracking-tight leading-tight">
+                            Reschedule Appointment</h2>
+                        <p class="text-xs text-slate-500 mt-0.5">Select a new date for your workshop intake (bring in
+                            anytime 08:00 - 18:00)</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeRescheduleModal()"
+                    class="text-slate-400 hover:text-slate-600 p-2 rounded-lg hover:bg-slate-100 transition-colors"
+                    aria-label="Close modal">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto">
+                <!-- Current context -->
+                <div
+                    class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/70 flex items-center justify-between text-xs">
+                    <div>
+                        <span class="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Current
+                            Booking</span>
+                        <div id="rescheduleVehicleText" class="font-bold text-slate-900 mt-0.5">2018 Toyota Axio (WP
+                            CBA-4321)</div>
+                        <div id="rescheduleCurrentSlotText" class="text-slate-500 font-medium text-[11px] mt-0.5">
+                            Currently: Oct 12, 2026 (08:00 - 18:00)</div>
+                    </div>
+                    <span class="font-mono text-xs font-bold text-orange-600 bg-orange-100/70 px-2 py-0.5 rounded"
+                        id="rescheduleRefText">#WP-84920</span>
+                </div>
+
+                <!-- Date Selection -->
+                <div>
+                    <label for="rescheduleNewDate" class="block text-xs font-bold text-slate-800 mb-1.5">Select New
+                        Date</label>
+                    <input type="date" id="rescheduleNewDate"
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900 text-xs sm:text-sm font-semibold focus:outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/10 transition-all">
+                    <div class="flex items-center gap-2 mt-2">
+                        <button type="button" onclick="setQuickRescheduleDate(1)"
+                            class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors">Tomorrow</button>
+                        <button type="button" onclick="setQuickRescheduleDate(3)"
+                            class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors">In
+                            3 Days</button>
+                        <button type="button" onclick="setQuickRescheduleDate(7)"
+                            class="px-2.5 py-1 text-[11px] font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-600 transition-colors">Next
+                            Week</button>
+                    </div>
+                </div>
+
+                <!-- Opening Hours Notice -->
+                <div class="p-3.5 rounded-xl bg-orange-50/60 border border-orange-200/80 flex items-start gap-2.5">
+                    <svg class="w-4 h-4 text-orange-600 shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeRescheduleModal()"
+                    class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold hover:bg-white transition-colors">
+                    Back
+                </button>
+                <button type="button" onclick="saveAppointmentReschedule()"
+                    class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 active:translate-y-0.5 text-white text-xs sm:text-sm font-semibold flex items-center gap-2 shadow-sm shadow-orange-500/20 transition-all">
+                    <span>Confirm Reschedule</span>
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- URGENT ROADSIDE & WORKSHOP CONTACT MODAL                 -->
+    <!-- ======================================================== -->
+    <div id="contactModal"
+        class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+        <div
+            class="bg-white rounded-2xl max-w-md w-full p-6 shadow-modal border border-slate-200 relative animate-fade-in">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path
+                                d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">Contact Workshop Support</h3>
+                        <p class="text-xs text-slate-400">24/7 Roadside Assistance &amp; Front Desk</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeContactModal()" class="text-slate-400 hover:text-slate-600 p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mt-4 space-y-3">
+                <a href="tel:+94112345678"
+                    class="p-4 rounded-xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50/40 flex items-center justify-between transition-colors group">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-400 uppercase">Emergency Hotline (24/7)</div>
+                        <div class="text-base font-bold text-slate-900 group-hover:text-orange-600 font-mono mt-0.5">+94
+                            11 234 5678</div>
+                    </div>
+                    <div
+                        class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center text-slate-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </a>
+
+                <a href="tel:+94771234567"
+                    class="p-4 rounded-xl border border-slate-200 hover:border-orange-500 hover:bg-orange-50/40 flex items-center justify-between transition-colors group">
+                    <div>
+                        <div class="text-xs font-semibold text-slate-400 uppercase">Service Desk Direct</div>
+                        <div class="text-base font-bold text-slate-900 group-hover:text-orange-600 font-mono mt-0.5">+94
+                            77 123 4567</div>
+                    </div>
+                    <div
+                        class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-orange-500 group-hover:text-white flex items-center justify-center text-slate-600 transition-colors">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </a>
+
+                <div class="p-3 bg-slate-50 rounded-xl text-xs text-slate-500 leading-relaxed">
+                    <span class="font-semibold text-slate-700">Workshop Location:</span> No. 45/A, Baseline Road,
+                    Colombo 09. Recovery trucks available across Western Province.
+                </div>
+            </div>
+
+            <div class="mt-5 text-right">
+                <button type="button" onclick="closeContactModal()"
+                    class="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-colors">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification for Dynamic Actions -->
+    <div id="toastNotification"
+        class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white text-xs sm:text-sm px-4 py-3 rounded-xl shadow-xl flex items-center gap-3 transition-transform duration-300">
+        <svg class="w-5 h-5 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMessage">Appointment updated successfully!</span>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- INTERACTIVE JAVASCRIPT CONTROLLERS                       -->
+    <!-- ======================================================== -->
+    <script>
+        // 1. Mobile Sidebar Navigation Toggle
+        function toggleMobileSidebar(show) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // 2. Profile Dropdown Toggle
+        function toggleProfileDropdown() {
+            const menu = document.getElementById('profileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicked outside
+        window.addEventListener('click', (e) => {
+            const btn = document.getElementById('profileDropdownBtn');
+            const menu = document.getElementById('profileMenu');
+            if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+
+            // Close any open action menu
+            if (!e.target.closest('.action-dropdown') && !e.target.closest('button[onclick*="toggleActionMenu"]')) {
+                document.querySelectorAll('.action-dropdown').forEach(d => d.classList.add('hidden'));
+            }
+        });
+
+        // 3. Action Menu Toggle
+        function toggleActionMenu(menuId, event) {
+            event.stopPropagation();
+            const targetMenu = document.getElementById(menuId);
+            const isCurrentlyHidden = targetMenu.classList.contains('hidden');
+            document.querySelectorAll('.action-dropdown').forEach(d => d.classList.add('hidden'));
+            if (isCurrentlyHidden) {
+                targetMenu.classList.remove('hidden');
+            }
+        }
+
+        // 4. Tab Filtering (All / Upcoming / Completed)
+        let currentFilter = 'all';
+        function filterAppointments(filter, buttonElement) {
+            currentFilter = filter;
+            const buttons = document.querySelectorAll('#filterTabs .tab-btn');
+            buttons.forEach(btn => {
+                btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-50 whitespace-nowrap transition-colors';
+            });
+            buttonElement.className = 'tab-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-orange-50 text-orange-600 border border-orange-200/60 shadow-xs whitespace-nowrap transition-colors';
+
+            applyTableFilters();
+        }
+
+        // 5. Search Filtering
+        function searchAppointments() {
+            applyTableFilters();
+        }
+
+        function applyTableFilters() {
+            const query = (document.getElementById('tableFilterInput')?.value || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('.appointment-row');
+            let visibleCount = 0;
+
+            rows.forEach(row => {
+                const status = row.getAttribute('data-status');
+                const searchData = (row.getAttribute('data-search') || '').toLowerCase();
+
+                const matchesFilter = (currentFilter === 'all' || status === currentFilter);
+                const matchesQuery = !query || searchData.includes(query);
+
+                if (matchesFilter && matchesQuery) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            const countEl = document.getElementById('currentVisibleCount');
+            if (countEl) countEl.textContent = visibleCount;
+        }
+
+        // 6. Interactive Booking Modal Handlers
+        let selectedBookingDay = 24;
+        let selectedBookingMonth = 'Oct';
+        let selectedBookingYear = 2026;
+
+        function openBookingModal(vehicleName) {
+            const modal = document.getElementById('bookingModal');
+            if (!modal) return;
+
+            if (vehicleName) {
+                const select = document.getElementById('modalVehicleSelect');
+                if (select) {
+                    for (let i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value.toLowerCase().includes(vehicleName.toLowerCase())) {
+                            select.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('bookingModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+            document.body.style.overflow = '';
+        }
+
+        // Close when clicking modal backdrop
+        document.getElementById('bookingModal')?.addEventListener('click', (e) => {
+            if (e.target.id === 'bookingModal') {
+                closeBookingModal();
+            }
+        });
+
+        // Calendar Day Selection
+        function selectCalendarDate(day) {
+            selectedBookingDay = day;
+
+            // Update day buttons styling
+            document.querySelectorAll('.cal-day').forEach(btn => {
+                btn.className = 'cal-day py-2 rounded-lg text-slate-700 font-medium hover:bg-slate-100 transition-colors';
+            });
+
+            const activeBtn = document.querySelector(`.cal-day[data-day="${day}"]`);
+            if (activeBtn) {
+                activeBtn.className = 'cal-day py-2 rounded-lg bg-orange-500 text-white font-bold shadow-sm transition-all';
+            }
+        }
+
+        function changeCalendarMonth(delta) {
+            const label = document.getElementById('calendarMonthLabel');
+            if (delta > 0) {
+                label.textContent = 'November 2026';
+                selectedBookingMonth = 'Nov';
+            } else {
+                label.textContent = 'October 2026';
+                selectedBookingMonth = 'Oct';
+            }
+            showToast(`Calendar month updated to ${label.textContent}`);
+        }
+
+        // 6. Interactive Booking Controller (Direct Confirmation without OTP)
+        let pendingBooking = null;
+        let lastConfirmedRef = '#WP-84920';
+
+        // Direct Booking Confirmation: Instantly confirms booking and opens success confirmation
+        function confirmAppointmentBooking() {
+            const vehicle = document.getElementById('modalVehicleSelect')?.value || '2018 Toyota Axio (WP CBA-4321)';
+            const concerns = document.getElementById('modalBookingConcerns')?.value || 'Standard Periodic Maintenance';
+            const bookingDateStr = `${selectedBookingMonth} ${selectedBookingDay}, ${selectedBookingYear}`;
+
+            pendingBooking = {
+                vehicle: vehicle,
+                concerns: concerns,
+                dateStr: bookingDateStr
+            };
+
+            // Generate booking confirmation reference
+            const randomId = Math.floor(10000 + Math.random() * 90000);
+            lastConfirmedRef = `#WP-${randomId}`;
+
+            // Close main booking modal
+            closeBookingModal();
+
+            // Insert into Appointments Data Table
+            insertConfirmedAppointmentRow(pendingBooking, lastConfirmedRef);
+
+            // Open Success Modal directly
+            openSuccessModal();
+
+            showToast(`Booking ${lastConfirmedRef} confirmed successfully!`);
+        }
+
+        function openSuccessModal() {
+            const successModal = document.getElementById('bookingSuccessModal');
+            if (!successModal || !pendingBooking) return;
+
+            document.getElementById('successBookingRef').textContent = lastConfirmedRef;
+            document.getElementById('successVehicle').textContent = pendingBooking.vehicle;
+            document.getElementById('successDateTime').textContent = `${pendingBooking.dateStr} (08:00 - 18:00)`;
+
+            successModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('bookingSuccessModal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+
+            // Scroll to the newly added row
+            const newRow = document.querySelector('.newly-confirmed-row');
+            if (newRow) {
+                newRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function downloadBookingPass() {
+            showToast(`Downloading Intake Bay Pass (${lastConfirmedRef}.pdf)...`);
+        }
+
+        // Insert new confirmed row into table
+        function insertConfirmedAppointmentRow(booking, refCode) {
+            const tableBody = document.querySelector('#appointmentsTable tbody');
+            if (!tableBody) return;
+
+            const rowId = `appointment-row-${Date.now()}`;
+            const menuId = `menu-${rowId}`;
+            const newRow = document.createElement('tr');
+            newRow.id = rowId;
+            newRow.className = 'appointment-row newly-confirmed-row hover:bg-slate-50/70 transition-all border-b border-slate-100 bg-orange-50/30 ring-2 ring-orange-500/20';
+            newRow.setAttribute('data-id', rowId);
+            newRow.setAttribute('data-ref', refCode);
+            newRow.setAttribute('data-vehicle', booking.vehicle);
+            newRow.setAttribute('data-date', booking.dateStr);
+            newRow.setAttribute('data-time', '08:00 - 18:00');
+            newRow.setAttribute('data-bay', 'Bay #02 (Express Bay)');
+            newRow.setAttribute('data-note', booking.concerns || 'Routine vehicle intake inspection.');
+            newRow.setAttribute('data-status', 'upcoming');
+            newRow.setAttribute('data-search', `${booking.vehicle} ${booking.dateStr} ${booking.concerns} ${refCode}`.toLowerCase());
+
+            newRow.innerHTML = `
+                <td class="py-4 px-5 sm:px-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50/60 border border-blue-100/60 text-blue-600 flex items-center justify-center shrink-0">
+                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <span class="font-semibold text-slate-900 text-sm row-date-display">${booking.dateStr}</span>
+                    </div>
+                </td>
+                <td class="py-4 px-5 sm:px-6">
+                    <div class="font-semibold text-slate-900 text-sm">${booking.vehicle.split('(')[0].trim()}</div>
+                    <div class="mt-1">
+                        <span class="inline-block px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono text-[11px] font-medium tracking-wide">
+                            ${booking.vehicle.includes('(') ? booking.vehicle.split('(')[1].replace(')', '') : 'WP CBA-4321'}
+                        </span>
+                    </div>
+                </td>
+                <td class="py-4 px-5 sm:px-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Confirmed
+                    </span>
+                </td>
+                <td class="py-4 px-5 sm:px-6 text-right sm:text-center relative">
+                    <div class="inline-block text-left relative">
+                        <button type="button" onclick="toggleActionMenu('${menuId}', event)"
+                            class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="1.5"></circle>
+                                <circle cx="12" cy="5" r="1.5"></circle>
+                                <circle cx="12" cy="19" r="1.5"></circle>
+                            </svg>
+                        </button>
+                        <div id="${menuId}"
+                            class="action-dropdown hidden absolute right-0 mt-1 w-44 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-40 text-xs text-slate-700 text-left">
+                            <button type="button" onclick="openViewAppointmentModal('${rowId}')"
+                                class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                <span>View Details</span>
+                            </button>
+                            <button type="button" onclick="openRescheduleModal('${rowId}')"
+                                class="w-full flex items-center gap-2 px-3 py-2 hover:bg-slate-50 transition-colors">
+                                <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                                </svg>
+                                <span>Reschedule</span>
+                            </button>
+                            <button type="button" onclick="openCancelConfirmModal('${rowId}')"
+                                class="w-full flex items-center gap-2 px-3 py-2 text-rose-600 hover:bg-rose-50 transition-colors border-t border-slate-100">
+                                <svg class="w-4 h-4 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                                <span>Cancel Appointment</span>
+                            </button>
+                        </div>
+                    </div>
+                </td>
+            `;
+
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+            applyTableFilters();
+
+            // Increment upcoming count KPI
+            const upcomingCountCard = document.querySelectorAll('.grid .text-3xl')[1];
+            if (upcomingCountCard) {
+                const currentVal = parseInt(upcomingCountCard.textContent.trim(), 10) || 1;
+                upcomingCountCard.textContent = currentVal + 1;
+            }
+        }
+
+        // ========================================================
+        // 7. VIEW APPOINTMENT CONTROLLER
+        // Displays vehicle, date, time, and note kept when booked
+        // ========================================================
+        let activeViewRow = null;
+
+        function findAppointmentRow(target) {
+            if (typeof target === 'string') {
+                return document.getElementById(target);
+            }
+            if (target && target.nodeType) {
+                return target.closest('.appointment-row');
+            }
+            return target;
+        }
+
+        function openViewAppointmentModal(target) {
+            const row = findAppointmentRow(target);
+            if (!row) return;
+
+            activeViewRow = row;
+
+            // Extract data from row attributes
+            const ref = row.getAttribute('data-ref') || '#WP-84920';
+            const vehicle = row.getAttribute('data-vehicle') || '2018 Toyota Axio (WP CBA-4321)';
+            const date = row.getAttribute('data-date') || 'Oct 12, 2026';
+            const note = row.getAttribute('data-note') || 'No special instructions recorded.';
+            const status = row.getAttribute('data-status') || 'upcoming';
+
+            // Split vehicle into model & plate
+            let modelName = vehicle;
+            let plateText = 'WP CBA-4321';
+            if (vehicle.includes('(')) {
+                const parts = vehicle.split('(');
+                modelName = parts[0].trim();
+                plateText = parts[1].replace(')', '').trim();
+            }
+
+            // Populate view modal elements
+            document.getElementById('viewModalRef').textContent = ref;
+            document.getElementById('viewModalVehicleName').textContent = modelName;
+            document.getElementById('viewModalPlate').textContent = plateText;
+            document.getElementById('viewModalDateTime').textContent = date;
+            document.getElementById('viewModalNotes').textContent = note;
+
+            // Update status badge
+            const statusEl = document.getElementById('viewModalStatus');
+            if (statusEl) {
+                if (status === 'completed') {
+                    statusEl.textContent = 'Completed';
+                    statusEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                } else {
+                    statusEl.textContent = 'Upcoming';
+                    statusEl.className = 'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200';
+                }
+            }
+
+            // Toggle reschedule / cancel actions in footer based on status
+            const actionsWrap = document.getElementById('viewModalUpcomingActions');
+            if (actionsWrap) {
+                if (status === 'completed') {
+                    actionsWrap.classList.add('hidden');
+                } else {
+                    actionsWrap.classList.remove('hidden');
+                }
+            }
+
+            // Close any open action menu
+            document.querySelectorAll('.action-dropdown').forEach(d => d.classList.add('hidden'));
+
+            // Show view modal
+            document.getElementById('viewAppointmentModal')?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeViewAppointmentModal() {
+            document.getElementById('viewAppointmentModal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        function triggerRescheduleFromView() {
+            const row = activeViewRow;
+            closeViewAppointmentModal();
+            if (row) openRescheduleModal(row);
+        }
+
+        function triggerCancelFromView() {
+            const row = activeViewRow;
+            closeViewAppointmentModal();
+            if (row) openCancelConfirmModal(row);
+        }
+
+        // ========================================================
+        // 8. CANCEL APPOINTMENT CONTROLLER
+        // Simple confirmation screen with cancel and back button
+        // ========================================================
+        let rowToCancel = null;
+
+        function openCancelConfirmModal(target) {
+            const row = findAppointmentRow(target);
+            if (!row) return;
+
+            rowToCancel = row;
+
+            const ref = row.getAttribute('data-ref') || '#WP-84920';
+            const vehicle = row.getAttribute('data-vehicle') || '2018 Toyota Axio (WP CBA-4321)';
+            const date = row.getAttribute('data-date') || 'Oct 12, 2026';
+
+            document.getElementById('cancelModalRefText').textContent = ref;
+            document.getElementById('cancelModalVehicleText').textContent = vehicle;
+            document.getElementById('cancelModalDateTimeText').textContent = date;
+
+            // Close any open action dropdown
+            document.querySelectorAll('.action-dropdown').forEach(d => d.classList.add('hidden'));
+
+            document.getElementById('cancelConfirmModal')?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeCancelConfirmModal() {
+            document.getElementById('cancelConfirmModal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+            rowToCancel = null;
+        }
+
+        function executeCancelAppointment() {
+            if (!rowToCancel) return;
+
+            const ref = rowToCancel.getAttribute('data-ref') || 'Appointment';
+            const wasUpcoming = rowToCancel.getAttribute('data-status') === 'upcoming';
+
+            rowToCancel.remove();
+
+            // Decrement upcoming count KPI if applicable
+            if (wasUpcoming) {
+                const upcomingCountCard = document.querySelectorAll('.grid .text-3xl')[1];
+                if (upcomingCountCard) {
+                    const currentVal = parseInt(upcomingCountCard.textContent.trim(), 10) || 1;
+                    if (currentVal > 0) upcomingCountCard.textContent = currentVal - 1;
+                }
+            }
+
+            applyTableFilters();
+            closeCancelConfirmModal();
+            showToast(`${ref} cancelled successfully.`);
+        }
+
+        // ========================================================
+        // 9. RESCHEDULE APPOINTMENT CONTROLLER
+        // Edit date
+        // ========================================================
+        let rowToReschedule = null;
+
+        function openRescheduleModal(target) {
+            const row = findAppointmentRow(target);
+            if (!row) return;
+
+            rowToReschedule = row;
+
+            const ref = row.getAttribute('data-ref') || '#WP-84920';
+            const vehicle = row.getAttribute('data-vehicle') || '2018 Toyota Axio (WP CBA-4321)';
+            const date = row.getAttribute('data-date') || 'Oct 12, 2026';
+
+            document.getElementById('rescheduleRefText').textContent = ref;
+            document.getElementById('rescheduleVehicleText').textContent = vehicle;
+            document.getElementById('rescheduleCurrentSlotText').textContent = `Currently: ${date} (08:00 - 18:00)`;
+
+            // Set default date input value (e.g. tomorrow or next days)
+            const dateInput = document.getElementById('rescheduleNewDate');
+            if (dateInput) {
+                // If today is in 2026, set to October 2026
+                dateInput.value = '2026-10-18';
+                dateInput.min = '2026-09-27';
+            }
+
+            // Close any open action dropdown
+            document.querySelectorAll('.action-dropdown').forEach(d => d.classList.add('hidden'));
+
+            document.getElementById('rescheduleAppointmentModal')?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRescheduleModal() {
+            document.getElementById('rescheduleAppointmentModal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+            rowToReschedule = null;
+        }
+
+        function setQuickRescheduleDate(daysFromNow) {
+            const dateInput = document.getElementById('rescheduleNewDate');
+            if (!dateInput) return;
+
+            // In our system context, base on October 2026
+            let baseDay = 15 + daysFromNow;
+            if (baseDay > 31) baseDay = 31;
+            const dayStr = baseDay < 10 ? '0' + baseDay : '' + baseDay;
+            dateInput.value = `2026-10-${dayStr}`;
+        }
+
+        function formatPickerDate(dateVal) {
+            if (!dateVal) return 'Oct 28, 2026';
+            const parts = dateVal.split('-');
+            if (parts.length === 3) {
+                const year = parts[0];
+                const monthIndex = parseInt(parts[1], 10) - 1;
+                const day = parseInt(parts[2], 10);
+                const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${months[monthIndex] || 'Oct'} ${day < 10 ? '0' + day : day}, ${year}`;
+            }
+            return dateVal;
+        }
+
+        function saveAppointmentReschedule() {
+            if (!rowToReschedule) return;
+
+            const dateInput = document.getElementById('rescheduleNewDate');
+            const chosenDate = formatPickerDate(dateInput ? dateInput.value : '');
+            const ref = rowToReschedule.getAttribute('data-ref') || '#WP-84920';
+
+            // Update row attributes
+            rowToReschedule.setAttribute('data-date', chosenDate);
+            rowToReschedule.setAttribute('data-search', `${rowToReschedule.getAttribute('data-vehicle')} ${chosenDate} ${ref}`.toLowerCase());
+
+            // Update DOM displays inside the row
+            const dateEl = rowToReschedule.querySelector('.row-date-display');
+            if (dateEl) dateEl.textContent = chosenDate;
+
+            // Subtle animation highlight
+            rowToReschedule.classList.add('ring-2', 'ring-orange-500/40', 'bg-orange-50/40');
+            setTimeout(() => {
+                rowToReschedule.classList.remove('ring-2', 'ring-orange-500/40', 'bg-orange-50/40');
+            }, 2000);
+
+            closeRescheduleModal();
+            showToast(`${ref} successfully rescheduled to ${chosenDate}!`);
+        }
+
+        // Listen for query params e.g. appointments.html?open=booking or ?book=true or ?vehicle=...
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('book') === 'true' || urlParams.get('open') === 'booking' || urlParams.get('action') === 'book' || window.location.hash === '#book') {
+                const vehicle = urlParams.get('vehicle');
+                openBookingModal(vehicle);
+            }
+        });
+
+        // 10. Contact Modal Handlers
+        function openContactModal() {
+            document.getElementById('contactModal')?.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeContactModal() {
+            document.getElementById('contactModal')?.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+
+        // 11. Toast Helper
+        function showToast(message) {
+            const toast = document.getElementById('toastNotification');
+            const msgEl = document.getElementById('toastMessage');
+            if (toast && msgEl) {
+                msgEl.textContent = message;
+                toast.classList.remove('hidden');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                }, 4000);
+            }
+        }
+
+        function exportAppointments() {
+            showToast('Exporting appointments summary to CSV...');
+        }
+
+        // Global Command-K focus shortcut
+        window.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                document.getElementById('globalSearchInput')?.focus();
+            }
+        });
+    </script>
+</body>
+
+</html>

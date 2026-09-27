@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>All Vehicles History - Technician Workstation | VWMS</title>
+    <meta name="description"
+        content="VWMS Master Vehicle Service History - Complete historical directory and Job Card inspection for all vehicles serviced by Dishan Karunaratne.">
+
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#F05A28',
+                            'orange-hover': '#D94819',
+                            'orange-light': '#FFF7ED',
+                            'orange-border': '#FFEDD5',
+                        },
+                        navy: {
+                            900: '#0F172A',
+                            800: '#1E293B',
+                            700: '#334155',
+                        },
+                    },
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .nav-item-active {
+            background: #F05A28;
+            color: #FFFFFF;
+        }
+
+        /* Subtle scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #F8FAFC;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+    </style>
+</head>
+
+<body class="bg-[#F8FAFC] text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <div class="flex-1 flex min-h-screen">
+
+        <!-- ======================================================== -->
+        <!-- 1. LEFT SIDEBAR: DARK TECHNICIAN WORKSTATION NAVIGATION -->
+        <!-- ======================================================== -->
+        <aside id="sidebar"
+            class="fixed top-0 bottom-0 left-0 w-64 bg-[#0F172A] text-white z-50 flex flex-col justify-between transition-transform duration-300 -translate-x-full lg:translate-x-0 lg:static lg:z-auto border-r border-slate-800 flex-shrink-0">
+
+            <!-- Top Container: Logo + Menu Items -->
+            <div class="flex flex-col">
+                <!-- Top Brand: VWMS OS -->
+                <div class="px-5 py-5 border-b border-slate-800/80 flex items-center justify-between">
+                    <a href="/technician/workstation" class="flex items-center gap-2.5 group">
+                        <div
+                            class="w-8 h-8 rounded-lg bg-[#F05A28] flex items-center justify-center shadow-md shadow-orange-500/20 group-hover:scale-105 transition-transform duration-200">
+                            <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path
+                                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center text-lg font-bold tracking-tight leading-none">
+                                <span class="text-white">VWMS</span>
+                                <span class="text-[#F05A28] ml-1.5 font-extrabold">OS</span>
+                            </div>
+                            <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest mt-1">SERVICE
+                                DESK</span>
+                        </div>
+                    </a>
+
+                    <!-- Mobile Drawer Close Button -->
+                    <button type="button" class="lg:hidden text-slate-400 hover:text-white p-1"
+                        onclick="toggleMobileSidebar(false)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Navigation List -->
+                <nav class="px-3 py-5 space-y-1.5" aria-label="Technician Navigation">
+                    <div class="px-3 pb-2 text-[10px] font-bold text-slate-400 tracking-widest uppercase">
+                        OPERATIONS
+                    </div>
+
+                    <!-- 1. My Jobs (Link back to Board) -->
+                    <a href="/technician/workstation"
+                        class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 font-medium text-sm transition-colors duration-150">
+                        <svg class="w-4 h-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z">
+                            </path>
+                        </svg>
+                        <span>My Jobs</span>
+                    </a>
+
+                    <!-- 2. Job History (Active Tab) -->
+                    <a href="/technician/job-history"
+                        class="nav-item-active flex items-center gap-3 px-3.5 py-2.5 rounded-lg font-semibold text-sm transition-all duration-150 shadow-sm">
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                            <polyline points="12 7 12 12 15 15"></polyline>
+                        </svg>
+                        <span>Job History</span>
+                    </a>
+                </nav>
+            </div>
+
+            <!-- Bottom Section: Dishan K. Technician Profile Card -->
+            <div class="p-3 border-t border-slate-800">
+                <div
+                    class="border border-dashed border-slate-700/80 rounded-lg p-2.5 flex items-center justify-between bg-slate-900/40">
+                    <div class="flex items-center gap-2.5">
+                        <div class="relative flex-shrink-0">
+                            <div
+                                class="w-8 h-8 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                                DK
+                            </div>
+                            <span
+                                class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0F172A] rounded-full"></span>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-xs font-bold text-white truncate leading-tight">Dishan K.</span>
+                            <span class="text-[11px] text-slate-400 truncate leading-tight mt-0.5">Technician</span>
+                        </div>
+                    </div>
+
+                    <button type="button" onclick="lockTechnicianStation()"
+                        class="p-1.5 text-slate-500 hover:text-slate-200 transition-colors" title="Lock Workstation">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                            stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </aside>
+
+        <!-- Mobile Sidebar Overlay Backdrop -->
+        <div id="sidebarBackdrop" class="fixed inset-0 bg-slate-900/60 z-40 lg:hidden hidden backdrop-blur-sm"
+            onclick="toggleMobileSidebar(false)"></div>
+
+        <!-- ======================================================== -->
+        <!-- 2. MAIN WORKSPACE CONTAINER                             -->
+        <!-- ======================================================== -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+
+            <!-- Top Header Bar -->
+            <header
+                class="bg-white border-b border-slate-200/90 h-16 px-4 sm:px-6 lg:px-8 flex items-center justify-between sticky top-0 z-30 shadow-2xs">
+
+                <div class="flex items-center gap-3">
+                    <button type="button"
+                        class="lg:hidden text-slate-600 hover:text-slate-900 p-1.5 rounded-md hover:bg-slate-100"
+                        onclick="toggleMobileSidebar(true)" aria-label="Open menu">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Breadcrumbs -->
+                    <div class="flex items-center gap-1.5 text-xs text-slate-400">
+                        <a href="/technician/workstation" class="hover:text-slate-700 transition-colors">My Jobs</a>
+                        <span>/</span>
+                        <span class="font-semibold text-slate-700">Job History (All Vehicles)</span>
+                    </div>
+                </div>
+
+                <!-- Right Utilities -->
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <a href="/technician/workstation"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors">
+                        <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="15 18 9 12 15 6"></polyline>
+                        </svg>
+                        <span>Back to Board</span>
+                    </a>
+
+                    <!-- Profile Circle -->
+                    <div
+                        class="w-8 h-8 rounded-full bg-[#EA580C] text-white flex items-center justify-center text-xs font-bold ring-2 ring-white shadow-sm"
+                        title="Dishan Karunaratne">
+                        DK
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-[1600px] w-full mx-auto space-y-6">
+
+                <!-- Page Headline with Name Pill -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">All Serviced Vehicles History</h1>
+
+                        <div
+                            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200 shadow-2xs">
+                            <span class="w-2 h-2 rounded-full bg-[#F05A28]"></span>
+                            <span>Dishan Karunaratne • Bay 03 Master Technician</span>
+                        </div>
+                    </div>
+
+                    <!-- Right Quick Actions -->
+                    <div class="flex items-center gap-2.5">
+                        <button type="button" onclick="exportHistoryCSV()"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-2xs transition-colors">
+                            <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            <span>Export CSV Log</span>
+                        </button>
+                        <a href="/technician/workstation"
+                            class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#F05A28] hover:bg-[#D94819] text-white text-xs font-bold shadow-xs transition-colors">
+                            <span>My Jobs Kanban</span>
+                            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="9 18 15 12 9 6"></polyline>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Search Toolbar -->
+                <div class="bg-white rounded-xl border border-slate-200/90 shadow-2xs p-3.5">
+                    <div class="relative w-full max-w-md">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="allVehiclesSearch" oninput="filterAllVehicles()"
+                            placeholder="Search by plate, vehicle model, customer, or Job Card #..."
+                            class="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:ring-1 focus:ring-[#F05A28] focus:border-[#F05A28] outline-none transition-all">
+                    </div>
+                </div>
+
+                <!-- Comprehensive Vehicles Table Log -->
+                <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs">
+                            <thead
+                                class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200 select-none">
+                                <tr>
+                                    <th class="py-3.5 px-4">VEHICLE & PLATE</th>
+                                    <th class="py-3.5 px-4">CUSTOMER</th>
+                                    <th class="py-3.5 px-4">WORK SCOPE / REPAIR</th>
+                                    <th class="py-3.5 px-4">BAY TIME</th>
+                                    <th class="py-3.5 px-4">QA SIGN OFF</th>
+                                    <th class="py-3.5 px-4">STATUS</th>
+                                    <th class="py-3.5 px-4 text-right">OFFICIAL JOB CARD</th>
+                                </tr>
+                            </thead>
+                            <tbody id="allVehiclesTableBody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Populated dynamically by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Table Footer Info -->
+                    <div class="px-5 py-3.5 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span id="recordCountText">Showing 15 of 48 historical completed jobs</span>
+                        <div class="flex items-center gap-1.5">
+                            <button type="button" class="px-2.5 py-1 rounded bg-white border border-slate-200 text-slate-600 font-semibold shadow-2xs hover:bg-slate-50">1</button>
+                            <button type="button" class="px-2.5 py-1 rounded hover:bg-slate-200 text-slate-600 font-semibold">2</button>
+                            <button type="button" class="px-2.5 py-1 rounded hover:bg-slate-200 text-slate-600 font-semibold">3</button>
+                            <span class="text-slate-400">...</span>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- COMPLETED VEHICLE JOB CARD / SERVICE SUMMARY MODAL       -->
+    <!-- ======================================================== -->
+    <div id="completedJobCardModal"
+        class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/70 backdrop-blur-sm hidden"
+        role="dialog" aria-modal="true">
+        <div
+            class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-4xl overflow-hidden transform transition-all flex flex-col max-h-[92vh]">
+
+            <!-- Modal Header (Dark Workshop Navy) -->
+            <div class="px-6 py-4 bg-[#0F172A] text-white flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-[#F05A28] flex items-center justify-center shadow-md shadow-orange-500/20">
+                        <svg class="w-4 h-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold uppercase tracking-widest text-[#F05A28]">VWMS OFFICIAL SERVICE LOG</span>
+                            <span class="text-slate-400 text-xs">•</span>
+                            <span id="jcCardNumber" class="font-mono text-xs font-bold text-slate-300">JC-2026-0941</span>
+                        </div>
+                        <h2 class="text-base sm:text-lg font-extrabold text-white tracking-tight">Completed Vehicle Job Card</h2>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="printJobCard()"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors">
+                        <svg class="w-3.5 h-3.5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        <span>Print Job Card</span>
+                    </button>
+                    <button type="button" onclick="closeCompletedJobCard()"
+                        class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition-colors" aria-label="Close modal">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Job Card Content Body (Scrollable) -->
+            <div id="jobCardPrintArea" class="p-5 sm:p-6 space-y-5 text-xs text-slate-700 overflow-y-auto flex-1">
+
+                <!-- Meta Ribbon -->
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <span id="jcPlateBadge"
+                            class="inline-flex items-center gap-1.5 font-mono font-bold text-white text-xs bg-[#0F172A] px-3 py-1.5 rounded shadow-xs tracking-tight">
+                            <span class="w-1.5 h-1.5 rounded-full bg-[#F05A28]"></span>
+                            WP CBJ-5049
+                        </span>
+                        <span id="jcStatusBadge"
+                            class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                            Delivered & Closed
+                        </span>
+                        <span id="jcQaBadge"
+                            class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-50 text-blue-800 border border-blue-200 flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            </svg>
+                            QA Verified (100% Passed)
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-4 text-xs text-slate-500">
+                        <div>
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Completed On</span>
+                            <span id="jcCompletedDate" class="font-bold text-slate-800">26 Sep 2026, 14:15</span>
+                        </div>
+                        <div class="border-l border-slate-200 pl-4">
+                            <span class="text-slate-400 block text-[10px] uppercase font-bold">Bay Elapsed Time</span>
+                            <span id="jcBayTime" class="font-bold text-slate-800">1h 45m</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2-Column Specs: Vehicle Information & Customer/Staff -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Vehicle Specification Card -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-2.5 shadow-2xs">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-[#F05A28]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="1" y="3" width="15" height="13"></rect>
+                                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                                    <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                                    <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                                </svg>
+                                Vehicle Information
+                            </span>
+                            <span id="jcEngine" class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded">2.7L Petrol</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Make & Model</span>
+                                <span id="jcVehicleModel" class="font-bold text-slate-800">Toyota Land Cruiser Prado TX-L 2020</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Chassis / VIN</span>
+                                <span id="jcVin" class="font-mono text-slate-800 font-semibold">TRJ150-0084921</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Mileage / Odometer</span>
+                                <span id="jcMileage" class="font-bold text-slate-800">58,420 km</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Service Category</span>
+                                <span id="jcCategory" class="font-bold text-[#F05A28]">Brake & Chassis</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Customer & Workshop Assignment Card -->
+                    <div class="bg-white rounded-xl border border-slate-200 p-4 space-y-2.5 shadow-2xs">
+                        <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+                                <svg class="w-3.5 h-3.5 text-[#F05A28]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                Customer & Personnel
+                            </span>
+                            <span id="jcBay" class="text-[10px] font-bold text-slate-700 bg-orange-50 border border-orange-200 px-2 py-0.5 rounded">Bay 03</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Customer Name</span>
+                                <span id="jcCustomerName" class="font-bold text-slate-800">Dr. Nalaka Jayasuriya</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Contact Number</span>
+                                <span id="jcCustomerPhone" class="font-semibold text-slate-800">+94 77 123 4567</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Service Advisor</span>
+                                <span id="jcAdvisor" class="font-semibold text-slate-800">Malik Alwis (Front Desk)</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold text-slate-400 uppercase">Lead Technician</span>
+                                <span id="jcTechnician" class="font-bold text-slate-900 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#F05A28]"></span>
+                                    Dishan Karunaratne (TK-402)
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Customer Concern & Diagnostics -->
+                <div class="bg-amber-50/50 border border-amber-200/80 rounded-xl p-4 space-y-2">
+                    <div>
+                        <span class="text-[10px] font-bold text-amber-800 uppercase tracking-wider block">Customer Reported Issue / Symptom</span>
+                        <p id="jcConcern" class="text-xs text-slate-800 font-medium mt-0.5">
+                            Customer reported front wheel brake squeal at low speeds and steering vibration during hard braking above 60 km/h.
+                        </p>
+                    </div>
+                    <div class="pt-2 border-t border-amber-200/60">
+                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">Technical Diagnostic Findings</span>
+                        <p id="jcDiagnostics" class="text-xs text-slate-700 mt-0.5">
+                            Front brake rotor runout exceeded 0.08mm causing pulsation. Inner brake pads worn to 3.2mm (replacement threshold 3.0mm). Caliper slide pins dry.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Completed Work Checklist -->
+                <div>
+                    <span class="block text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 11 12 14 22 4"></polyline>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        Service Operations & Technical Steps Completed
+                    </span>
+                    <div id="jcChecklistContainer" class="space-y-1.5 bg-slate-50 border border-slate-200 rounded-xl p-3">
+                        <!-- Injected dynamically -->
+                    </div>
+                </div>
+
+                <!-- Requisitioned Parts & Consumables Log -->
+                <div>
+                    <span class="block text-[11px] font-bold text-slate-800 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5 text-[#F05A28]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                        Parts & Consumables Replaced from Inventory
+                    </span>
+                    <div class="overflow-hidden border border-slate-200 rounded-xl bg-white">
+                        <table class="w-full text-left text-xs">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[9px] tracking-wider border-b border-slate-200">
+                                <tr>
+                                    <th class="py-2.5 px-3">PART #</th>
+                                    <th class="py-2.5 px-3">DESCRIPTION</th>
+                                    <th class="py-2.5 px-3">QTY</th>
+                                    <th class="py-2.5 px-3 text-right">UNIT PRICE</th>
+                                </tr>
+                            </thead>
+                            <tbody id="jcPartsTableBody" class="divide-y divide-slate-100 font-medium">
+                                <!-- Injected dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Technician Notes & QA Sign-Off Seal -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+                    <div class="md:col-span-2 bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-1.5">
+                        <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Lead Technician Bay Observations</span>
+                        <p id="jcTechNotes" class="text-xs text-slate-700 italic">
+                            Rotors resurfaced within safety limits. Caliper pistons retracted smoothly with no seal degradation. Anti-seize compound applied to wheel hub mounting faces.
+                        </p>
+                    </div>
+
+                    <!-- Official QA Certification Stamp -->
+                    <div class="bg-emerald-50/60 border-2 border-dashed border-emerald-300 rounded-xl p-3 flex flex-col justify-between text-center">
+                        <div class="flex items-center justify-center gap-1 text-emerald-800 font-extrabold text-[11px] uppercase tracking-wider">
+                            <svg class="w-4 h-4 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                            <span>QA Sign-off Approved</span>
+                        </div>
+                        <div class="my-1.5">
+                            <span class="text-[10px] text-slate-500 block">Inspected by:</span>
+                            <span id="jcQaInspector" class="font-bold text-xs text-slate-900 block">M. Seneviratne</span>
+                            <span class="text-[9px] font-semibold text-emerald-700 uppercase">Bay 03 Inspection Pass 100%</span>
+                        </div>
+                        <span class="text-[9px] text-slate-400 font-mono">VWMS-CERT-APPROVED</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 border-t border-slate-100 bg-slate-50/80 flex items-center justify-between gap-3 flex-shrink-0">
+                <span class="text-[11px] text-slate-400 hidden sm:inline">
+                    VWMS Workshop Operating System • Dishan Karunaratne Workstation
+                </span>
+
+                <div class="flex items-center gap-2.5 ml-auto">
+                    <button type="button" onclick="printJobCard()"
+                        class="px-4 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-2xs">
+                        <svg class="w-3.5 h-3.5 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        <span>Print Job Card</span>
+                    </button>
+                    <button type="button" onclick="closeCompletedJobCard()"
+                        class="px-5 py-2 rounded-xl bg-[#0F172A] hover:bg-slate-800 text-white font-bold text-xs transition-colors shadow-xs">
+                        Close
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+        class="fixed bottom-5 right-5 z-50 bg-[#0F172A] text-white text-xs px-4 py-3 rounded-lg shadow-xl border border-slate-700 flex items-center gap-2.5 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span id="toastMsg">Action updated!</span>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- JAVASCRIPT & ALL VEHICLES DATABASE                       -->
+    <!-- ======================================================== -->
+    <script>
+        const ALL_VEHICLES_DATABASE = [
+            {
+                id: 'JC-2026-0941',
+                plate: 'WP CBJ-5049',
+                model: 'Toyota Land Cruiser Prado TX-L 2020',
+                engine: '2.7L Petrol Dual VVT-i',
+                vin: 'TRJ150-0084921',
+                mileage: '58,420 km',
+                customer: 'Dr. Nalaka Jayasuriya',
+                phone: '+94 77 123 4567',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: 'Today, 14:15',
+                bayTime: '1h 45m',
+                status: 'Delivered',
+                category: 'Brake & Chassis',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: 'Customer reported front wheel brake squeal at low speeds and steering vibration during hard braking above 60 km/h.',
+                diagnosticFindings: 'Front brake rotor runout exceeded 0.08mm causing pulsation. Inner brake pads worn to 3.2mm (replacement threshold 3.0mm). Caliper slide pins dry.',
+                workScope: 'Front brake disc resurfacing & Ferodo ceramic pad replacement',
+                checklist: [
+                    { task: 'Vehicle raised and wheels dismounted safely on two-post lift', time: '12:35' },
+                    { task: 'Caliper slide pins and guide boots inspected & cleaned of road grime', time: '12:55' },
+                    { task: 'Brake disc rotors skimmed on in-bay lathe: Initial 27.8mm → Post 26.9mm (Min 25.0mm)', time: '13:20' },
+                    { task: 'Ferodo Formula ceramic pads installed with anti-squeal shims and ceramic grease', time: '13:40' },
+                    { task: 'Brake fluid flushed & hydraulic lines bled with Motul DOT 4 fluid', time: '13:55' },
+                    { task: 'Torque wheel lug nuts to manufacturer specification 112 Nm with torque wrench', time: '14:05' },
+                    { task: '5 km dynamic road test: Zero vibration, pedal feel firm, brake efficiency 82%', time: '14:15' }
+                ],
+                parts: [
+                    { code: 'FD-78401', desc: 'Ferodo Formula Ceramic Front Brake Pad Set', qty: '1 Set', price: 'LKR 28,500' },
+                    { code: 'BR-SKIM-02', desc: 'Precision In-Bay Disc Rotor Skimming Service', qty: '2 Discs', price: 'LKR 8,000' },
+                    { code: 'MO-DOT4-1L', desc: 'Motul DOT 4 High-Performance Brake Fluid (1L)', qty: '1 Can', price: 'LKR 4,200' },
+                    { code: 'LUB-SL-50', desc: 'High-Temp Synthetic Caliper Slide Pin Silicone Grease', qty: '1 App', price: 'LKR 1,200' }
+                ],
+                techNotes: 'Rotors resurfaced within safety limits. Caliper pistons retracted smoothly with no seal degradation. Anti-seize compound applied to wheel hub mounting faces.'
+            },
+            {
+                id: 'JC-2026-0938',
+                plate: 'WP KX-3108',
+                model: 'Toyota Hilux Revo 2.8D 4x4 2019',
+                engine: '1GD-FTV 2.8L Turbo Diesel',
+                vin: 'MR0BA3CD200-58190',
+                mileage: '40,150 km',
+                customer: 'Rohan Wickramasinghe',
+                phone: '+94 71 889 2311',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: 'Yesterday, 16:40',
+                bayTime: '2h 20m',
+                status: 'Delivered',
+                category: 'Major Service',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: '40,000 km Scheduled Major Drivetrain Maintenance Service & vehicle underbody inspection.',
+                diagnosticFindings: 'Routine scheduled replacement. Rear differential magnetic plug contained normal fine ferrous fuzz, no metal chips. Fuel filter element life at 90% capacity.',
+                workScope: 'Toyota Hilux 40k differential fluid service, transfer case & fuel filter replacement',
+                checklist: [
+                    { task: 'Front differential drained and filled with Toyota 75W-90 GL-5 (1.6L)', time: '14:30' },
+                    { task: 'Rear differential drained, magnetic plug cleaned, refilled with 75W-90 (2.6L)', time: '15:00' },
+                    { task: 'Transfer case fluid replaced with Toyota Genuine 75W Transfer Oil (1.4L)', time: '15:35' },
+                    { task: 'Diesel primary & secondary fuel filter elements replaced and primed with hand pump', time: '16:05' },
+                    { task: 'Propeller shaft and universal joints greased at 6 grease nipple points', time: '16:20' }
+                ],
+                parts: [
+                    { code: 'TOY-DIFF-7590', desc: 'Toyota Genuine Differential Gear Oil 75W-90 GL-5 (5L)', qty: '5 Litres', price: 'LKR 26,000' },
+                    { code: 'TOY-TC-75W', desc: 'Toyota Transfer Gear Oil 75W (2L)', qty: '2 Litres', price: 'LKR 11,500' },
+                    { code: 'TOY-23390-0L070', desc: 'Toyota Hilux Genuine Diesel Fuel Filter Element', qty: '1 Pc', price: 'LKR 8,900' }
+                ],
+                techNotes: 'Driveline fluids renewed. Transfer case actuator shifted smoothly between 2H, 4H, and 4L during bay test.'
+            },
+            {
+                id: 'JC-2026-0932',
+                plate: 'WP CAG-9912',
+                model: 'Honda Vezel e:HEV RS 2021',
+                engine: '1.5L e:HEV Hybrid',
+                vin: 'RV5-1002341',
+                mileage: '34,800 km',
+                customer: 'Dinithi Gunasekera',
+                phone: '+94 76 450 1199',
+                advisor: 'Kavindu Senanayake (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: 'Yesterday, 11:30',
+                bayTime: '1h 55m',
+                status: 'Handed Over',
+                category: 'Hybrid/EV',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: 'Slight judder when pulling away from dead stop; requested hybrid drivetrain service.',
+                diagnosticFindings: 'Clutch actuator reservoir fluid deteriorated and discolored. High moisture content (3.8%). No mechanical clutch wear detected.',
+                workScope: 'Dual-clutch actuator fluid replacement & Honda i-DCD clutch adaptation learning',
+                checklist: [
+                    { task: 'Connected Honda HDS Diagnostic Scanner to OBD-II port', time: '09:40' },
+                    { task: 'Clutch actuator reservoir drained and pressure flushed with fresh fluid', time: '10:15' },
+                    { task: 'Reverse pressure bleeding performed on clutch actuator slave cylinder', time: '10:45' },
+                    { task: 'Executed HDS Clutch Point Teach-In / Adaptation calibration routine', time: '11:05' }
+                ],
+                parts: [
+                    { code: 'HND-ATF-DW1', desc: 'Honda Genuine Ultra ATF-DW1 Fluid (2L)', qty: '2 Litres', price: 'LKR 14,800' },
+                    { code: 'HND-BF-DOT4', desc: 'Honda Genuine DOT 4 Ultra Brake Fluid (1L)', qty: '1 Litre', price: 'LKR 4,600' }
+                ],
+                techNotes: 'Clutch adaptation calibrated successfully. Hybrid high-voltage interlocks verified secure.'
+            },
+            {
+                id: 'JC-2026-0925',
+                plate: 'NW WP-9871',
+                model: 'Mitsubishi Montero Sport 3.2 DiD 2018',
+                engine: '4M41 3.2L Turbo Diesel',
+                vin: 'MMBJR45009-11204',
+                mileage: '92,100 km',
+                customer: 'Sanath Dissanayake',
+                phone: '+94 77 334 8920',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '24 Sep, 15:10',
+                bayTime: '3h 10m',
+                status: 'Delivered',
+                category: 'Engine/Transmission',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'S. Perera (Senior QA)',
+                customerConcern: 'Harsh 2nd to 3rd gear upshift when cold and delayed reverse gear engagement.',
+                diagnosticFindings: 'ATF burnt smell and brown discoloration. Line pressure at 5.2 bar (spec is 6.5 - 7.2 bar). Solenoid B resistance slightly high at 14.8 ohms.',
+                workScope: 'Automatic transmission fluid flush, pan cleaning & valve body solenoid inspection',
+                checklist: [
+                    { task: 'Transmission oil pan dropped, magnets inspected and cleaned of metallic sludge', time: '12:20' },
+                    { task: 'Replaced internal transmission filter strainer and rubber pan gasket', time: '12:55' },
+                    { task: 'Connected flush machine for 10L fluid exchange with Mitsubishi ATF SP-III', time: '14:20' }
+                ],
+                parts: [
+                    { code: 'MIT-SP3-ATF', desc: 'Mitsubishi Diamond ATF SP-III Automatic Fluid (10L)', qty: '10 Litres', price: 'LKR 42,000' },
+                    { code: 'MIT-FILTER-AT', desc: 'Montero Sport Internal ATF Transmission Filter Strainer', qty: '1 Pc', price: 'LKR 12,500' }
+                ],
+                techNotes: 'Line pressure recovered to 6.8 bar. Shift flare completely eliminated.'
+            },
+            {
+                id: 'JC-2026-0919',
+                plate: 'WP CAD-5521',
+                model: 'Suzuki Swift RS Turbo 1.0 2022',
+                engine: 'K10C 1.0L Turbo 3-Cyl',
+                vin: 'ZC13S-105942',
+                mileage: '28,300 km',
+                customer: 'Kasun Weerakkody',
+                phone: '+94 70 223 9988',
+                advisor: 'Kavindu Senanayake (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '23 Sep, 17:00',
+                bayTime: '2h 05m',
+                status: 'Delivered',
+                category: 'Brake & Chassis',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: 'Clunking noise from front left over rough potholes; vehicle pulling slightly to left.',
+                diagnosticFindings: 'Left front lower control arm rear hydro-bush ruptured and leaking fluid. Front stabilizer link boot torn with ball joint play.',
+                workScope: 'Lower control arm bush replacement, stabilizer link kit & 4-wheel Hunter laser alignment',
+                checklist: [
+                    { task: 'Front subframe and lower control arms dismantled safely', time: '15:15' },
+                    { task: 'Hydraulic shop press used to extract torn bushes and press in new OEM rubber bushes', time: '15:50' },
+                    { task: 'Mounted on Hunter Hawkeye Elite 4-Wheel Laser Alignment bay', time: '16:40' }
+                ],
+                parts: [
+                    { code: 'SZ-LCA-BUSH', desc: 'Suzuki Genuine Front Lower Control Arm Bush Kit (L+R)', qty: '1 Set', price: 'LKR 16,800' },
+                    { code: 'HUNTER-ALIGN', desc: 'Hunter 3D Laser 4-Wheel Alignment & Steering Reset', qty: '1 Service', price: 'LKR 4,500' }
+                ],
+                techNotes: 'Clunk eliminated. Front suspension geometry aligned to factory specs.'
+            },
+            {
+                id: 'JC-2026-0914',
+                plate: 'SP CAA-3319',
+                model: 'Mercedes-Benz C200 AMG Line 2017',
+                engine: 'M274 2.0L Turbo Petrol',
+                vin: 'WDD2050422R-209118',
+                mileage: '64,500 km',
+                customer: 'Chaminda Alahakoon',
+                phone: '+94 77 665 4411',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '22 Sep, 14:20',
+                bayTime: '1h 15m',
+                status: 'Delivered',
+                category: 'Electrical & Diagnostics',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: '"Auxiliary Battery Malfunction" warning on digital instrument cluster. Eco Start/Stop non-functional.',
+                diagnosticFindings: 'Star Xentry fault code B21DC01: Auxiliary capacitor / battery internal resistance too high.',
+                workScope: 'Auxiliary backup battery replacement & Star diagnostic fault code clear',
+                checklist: [
+                    { task: 'Connected Mercedes-Benz Star Xentry Diagnostic interface', time: '13:10' },
+                    { task: 'Removed depleted capacitor unit and installed OEM Varta backup unit', time: '13:50' },
+                    { task: 'Cleared diagnostic DTCs; verified active Eco Start/Stop function', time: '14:20' }
+                ],
+                parts: [
+                    { code: 'MB-VARTA-AUX', desc: 'OEM Varta Mercedes-Benz Auxiliary Battery 12V 1.2Ah', qty: '1 Pc', price: 'LKR 31,500' }
+                ],
+                techNotes: 'Warning message cleared. Main 12V AGM starter battery state of health tested at 91% (Good).'
+            },
+            {
+                id: 'JC-2026-0908',
+                plate: 'WP CBH-1490',
+                model: 'Toyota Prius 4th Gen 2017',
+                engine: '1.8L 2ZR-FXE Hybrid',
+                vin: 'ZVW50-5018241',
+                mileage: '78,200 km',
+                customer: 'Janaka Bandara',
+                phone: '+94 77 441 9900',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '21 Sep, 16:30',
+                bayTime: '1h 40m',
+                status: 'Delivered',
+                category: 'Hybrid/EV',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: 'Hybrid battery cooling fan high pitched buzzing; periodic hybrid checkup.',
+                diagnosticFindings: 'Heavy pet hair and lint buildup restricting intake ducting. HV battery temp 44°C (high).',
+                workScope: 'Hybrid traction battery blower fan ultrasonic de-dusting & intake filter retrofitting',
+                checklist: [
+                    { task: 'Disconnected 12V auxiliary and pulled HV orange safety service plug', time: '14:50' },
+                    { task: 'Dismantled rear passenger seat bolster and cooling fan housing', time: '15:20' },
+                    { task: 'Ultrasonic washed squirrel-cage fan impeller; lubricated motor bearing', time: '15:55' },
+                    { task: 'Techstream OBD live datalog: Fan duty cycle normal, battery operating at 34°C', time: '16:30' }
+                ],
+                parts: [
+                    { code: 'TOY-G92DH', desc: 'Toyota Genuine Hybrid HV Battery Air Intake Mesh Filter', qty: '1 Pc', price: 'LKR 5,800' }
+                ],
+                techNotes: 'Air flow restored. Battery module cell voltages balanced within 0.02V delta.'
+            },
+            {
+                id: 'JC-2026-0901',
+                plate: 'WP CAR-8821',
+                model: 'BMW 520d M-Sport (G30) 2019',
+                engine: 'B47 2.0L TwinPower Turbo Diesel',
+                vin: 'WBAJC32000-B21098',
+                mileage: '49,600 km',
+                customer: 'Heshan Ranatunga',
+                phone: '+94 71 556 7788',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '20 Sep, 17:15',
+                bayTime: '2h 45m',
+                status: 'Delivered',
+                category: 'Brake & Chassis',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: 'Rear right suspension sagging completely overnight; chassis warning light displayed.',
+                diagnosticFindings: 'Rear right Arnott air bellows rubber bladder punctured at lower fold crease.',
+                workScope: 'Rear air suspension bellows replacement & BMW ISTA ride-height calibration',
+                checklist: [
+                    { task: 'Depressurized air spring circuit using ISTA pneumatic diagnosis tool', time: '14:35' },
+                    { task: 'Extracted leaking right rear air strut assembly from wheel arch', time: '15:25' },
+                    { task: 'Installed OEM Continental replacement air bellows and quick-connect brass airline', time: '16:10' },
+                    { task: 'Carried out ISTA 4-corner chassis ride-height reference calibration', time: '17:15' }
+                ],
+                parts: [
+                    { code: 'BMW-AIR-G30', desc: 'OEM Continental Rear Air Spring Suspension Bellows', qty: '1 Pc', price: 'LKR 68,000' },
+                    { code: 'VOSS-FITT-04', desc: 'Voss Brass Pneumatic Push-In Fitting Connector', qty: '1 Pc', price: 'LKR 3,200' }
+                ],
+                techNotes: 'Vehicle left standing for 2 hours post-installation with zero height drop. Ride height verified at 685mm from wheel rim lip to fender.'
+            },
+            {
+                id: 'JC-2026-0895',
+                plate: 'CP CAI-7612',
+                model: 'Nissan X-Trail Hybrid 2018',
+                engine: 'MR20DD 2.0L Hybrid',
+                vin: 'HNT32-029411',
+                mileage: '84,300 km',
+                customer: 'Kumara Jayawardena',
+                phone: '+94 77 990 1212',
+                advisor: 'Kavindu Senanayake (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '19 Sep, 12:40',
+                bayTime: '2h 15m',
+                status: 'Delivered',
+                category: 'Hybrid/EV',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: 'High pitch motor buzzing sound whenever brake pedal touched; brake warning light on dash.',
+                diagnosticFindings: 'C118A Brake booster accumulator motor internal brushes worn; hydraulic accumulator pressure failing.',
+                workScope: 'Intelligent electric brake booster accumulator pump replacement & bleed',
+                checklist: [
+                    { task: 'Connected Consult-III Plus diagnostics and checked DTC C118A', time: '10:30' },
+                    { task: 'Drained brake hydraulic reservoir and unbolted brake actuator pump unit', time: '11:15' },
+                    { task: 'Installed new OEM Nissin brake booster accumulator pump module', time: '11:55' },
+                    { task: 'Automatic vacuum bleeding process executed via Consult-III Plus software', time: '12:40' }
+                ],
+                parts: [
+                    { code: 'NIS-ACC-PUMP', desc: 'Nissan Genuine Electric Brake Booster Accumulator Pump Unit', qty: '1 Pc', price: 'LKR 84,000' },
+                    { code: 'DOT4-LV-1L', desc: 'Low Viscosity DOT 4 ESP Brake Fluid (2L)', qty: '2 Litres', price: 'LKR 7,600' }
+                ],
+                techNotes: 'Accumulator builds 14.5 MPa in under 4 seconds. Zero diagnostic trouble codes.'
+            },
+            {
+                id: 'JC-2026-0888',
+                plate: 'WP KQ-5120',
+                model: 'Isuzu D-Max V-Cross 3.0D 2020',
+                engine: '4JJ3-TCX 3.0L Turbo Diesel',
+                vin: 'MPATG41J00-34981',
+                mileage: '62,000 km',
+                customer: 'Tharindu Rathnayake',
+                phone: '+94 70 881 2233',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '18 Sep, 16:15',
+                bayTime: '2h 30m',
+                status: 'Delivered',
+                category: 'Brake & Chassis',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: 'Humming grinding noise from front right hub above 50 km/h; gets louder on left curve turns.',
+                diagnosticFindings: 'Front right wheel hub bearing assembly dried of grease with severe galling on outer raceway.',
+                workScope: 'Front wheel bearing hub assembly overhaul & brake rotor resurface',
+                checklist: [
+                    { task: 'Removed front right brake caliper, rotor and hub spindle nut', time: '13:50' },
+                    { task: 'Pressed out worn wheel bearing unit with 20-ton hydraulic shop press', time: '14:35' },
+                    { task: 'Pressed in new OEM Koyo double-row tapered roller bearing and oil seal', time: '15:15' },
+                    { task: 'Spindle nut torqued to 216 Nm and staked; road tested at 80 km/h with silent operation', time: '16:15' }
+                ],
+                parts: [
+                    { code: 'KOYO-HUB-DMAX', desc: 'Koyo Japan Front Wheel Hub Bearing Assembly with ABS Sensor', qty: '1 Set', price: 'LKR 34,500' },
+                    { code: 'SEAL-OIL-ISZ', desc: 'Front Wheel Spindle Inner Double Lip Oil Seal', qty: '1 Pc', price: 'LKR 2,400' }
+                ],
+                techNotes: 'Axle spline greased with moly grease. Zero play detected on 12-6 and 9-3 wheel shake check.'
+            },
+            {
+                id: 'JC-2026-0881',
+                plate: 'WP CAC-6019',
+                model: 'Mazda CX-5 SkyActiv-D 2019',
+                engine: '2.2L SkyActiv-D Twin Turbo Diesel',
+                vin: 'KF2P-108221',
+                mileage: '71,400 km',
+                customer: 'Suresh Mendis',
+                phone: '+94 77 662 3344',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '17 Sep, 15:45',
+                bayTime: '3h 30m',
+                status: 'Delivered',
+                category: 'Major Service',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'S. Perera (Senior QA)',
+                customerConcern: 'Loss of low end acceleration and black exhaust haze during heavy acceleration.',
+                diagnosticFindings: 'Intake manifold runners and intake valve ports choked by 65% with hardened soot deposits.',
+                workScope: 'Intake valve walnut shell blast de-carbonization & EGR system flush',
+                checklist: [
+                    { task: 'Dismantled air intake piping, intercooler pipes and aluminum intake manifold', time: '12:20' },
+                    { task: 'Rotated crankshaft to close intake valves sequentially on cylinder 1-4', time: '13:10' },
+                    { task: 'Fine grade walnut shell abrasive blasting executed under vacuum extraction', time: '14:20' },
+                    { task: 'Cleaned EGR pipe and differential pressure sensor; cleared DPF adaptives', time: '15:45' }
+                ],
+                parts: [
+                    { code: 'WALNUT-25KG', desc: 'Fine Crushed Walnut Shell Blasting Media (Grade 20/30)', qty: '1 Bag', price: 'LKR 14,000' },
+                    { code: 'MAZ-GASK-SET', desc: 'Mazda SkyActiv-D Intake Manifold & Port Gasket Kit', qty: '1 Set', price: 'LKR 8,200' }
+                ],
+                techNotes: 'Valve stems cleaned to bare metal finish. Engine boost response and throttle pickup fully restored.'
+            },
+            {
+                id: 'JC-2026-0875',
+                plate: 'WP KI-9012',
+                model: 'Mitsubishi L200 Triton 2018',
+                engine: '4N15 2.4L MIVEC Turbo Diesel',
+                vin: 'MMBJR84000-88129',
+                mileage: '89,500 km',
+                customer: 'Niroshan Perera',
+                phone: '+94 71 223 4455',
+                advisor: 'Kavindu Senanayake (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '16 Sep, 14:10',
+                bayTime: '1h 50m',
+                status: 'Delivered',
+                category: 'Electrical & Diagnostics',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: 'Engine goes into limp mode on expressway; check engine light illuminates under heavy boost.',
+                diagnosticFindings: 'Fault code P0299 Turbocharger Underboost Condition. Variable geometry actuator arm binding.',
+                workScope: 'Variable geometry turbocharger (VGT) wastegate solenoid inspection & vacuum hose renewal',
+                checklist: [
+                    { task: 'Connected M-MDS diagnostic scanner and monitored live manifold absolute pressure (MAP)', time: '12:25' },
+                    { task: 'Tested turbo actuator diaphragm with Mityvac hand vacuum pump; found cracked silicone hose', time: '13:05' },
+                    { task: 'Replaced vacuum feed lines with high-temp braided silicone tubing', time: '13:40' },
+                    { task: 'Road tested under WOT acceleration: Boost target 2.1 bar reached cleanly', time: '14:10' }
+                ],
+                parts: [
+                    { code: 'SIL-HOSE-4MM', desc: 'High-Temp Reinforced Braided Silicone Vacuum Line (3m)', qty: '1 Roll', price: 'LKR 4,500' },
+                    { code: 'VAC-SOL-01', desc: 'Mitsubishi VGT Electronic Vacuum Control Solenoid Valve', qty: '1 Pc', price: 'LKR 16,500' }
+                ],
+                techNotes: 'Limp mode cleared. VGT vane mechanism lubricated with dry graphite lubricant.'
+            },
+            {
+                id: 'JC-2026-0869',
+                plate: 'WP CAD-1022',
+                model: 'Honda Civic FK7 Hatchback 2020',
+                engine: 'L15C 1.5L VTEC Turbo',
+                vin: 'FK7-1200941',
+                mileage: '42,100 km',
+                customer: 'Buddhika Silva',
+                phone: '+94 77 114 9988',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '15 Sep, 11:45',
+                bayTime: '1h 35m',
+                status: 'Delivered',
+                category: 'Engine/Transmission',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: '40,000 km Scheduled Maintenance Service including CVT transmission fluid change.',
+                diagnosticFindings: 'Routine fluid renewal. CVT fluid amber brown with slight shear degradation. Zero metal particles on drain plug.',
+                workScope: 'Continuously Variable Transmission (CVT) fluid drain & refill with Honda HCF-2',
+                checklist: [
+                    { task: 'Drained CVT fluid at warm engine idle temperature (3.7L drained)', time: '10:15' },
+                    { task: 'Cleaned magnetic drain plug and installed new aluminum sealing washer', time: '10:45' },
+                    { task: 'Filled with Honda Genuine HCF-2 fluid via transmission filler neck', time: '11:15' },
+                    { task: 'Monitored CVT oil temperature sensor to set exact level at check bolt (45°C)', time: '11:45' }
+                ],
+                parts: [
+                    { code: 'HND-HCF2-4L', desc: 'Honda Genuine Ultra HCF-2 Continuously Variable Fluid (4L)', qty: '1 Can', price: 'LKR 21,500' },
+                    { code: 'WASH-CRUSH-20', desc: 'Transmission Drain Plug Aluminum Crush Washer 20mm', qty: '1 Pc', price: 'LKR 450' }
+                ],
+                techNotes: 'CVT fluid level verified. Shift pattern test in D and S modes performed smoothly.'
+            },
+            {
+                id: 'JC-2026-0862',
+                plate: 'NW CAJ-4433',
+                model: 'Toyota Raize 1.0 Turbo 2021',
+                engine: '1KR-VET 1.0L Turbo 3-Cyl',
+                vin: 'A200A-0034182',
+                mileage: '30,050 km',
+                customer: 'Lalith Rajapaksha',
+                phone: '+94 76 550 1234',
+                advisor: 'Malik Alwis (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '14 Sep, 16:20',
+                bayTime: '1h 30m',
+                status: 'Delivered',
+                category: 'Major Service',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'M. Seneviratne (Chief QA)',
+                customerConcern: '30,000 km Periodic Inspection Service; check spark plugs and cabin air filter.',
+                diagnosticFindings: 'Routine periodic check. Iridium spark plugs clean with 0.8mm gap intact. Engine air filter moderately soiled.',
+                workScope: '30,000 km Periodic Maintenance Service, Toyota 0W-20 synthetic oil & filters',
+                checklist: [
+                    { task: 'Drained engine oil, replaced oil filter cartridge and renewed drain plug washer', time: '14:55' },
+                    { task: 'Refilled with Toyota Genuine 0W-20 Full Synthetic Motor Oil (3.1L)', time: '15:25' },
+                    { task: 'Replaced engine air filter and activated charcoal cabin pollen filter', time: '15:50' },
+                    { task: 'Reset maintenance reminder on digital instrument panel; multi-point safety check', time: '16:20' }
+                ],
+                parts: [
+                    { code: 'TOY-0W20-4L', desc: 'Toyota Genuine Full Synthetic Motor Oil 0W-20 (4L)', qty: '1 Can', price: 'LKR 18,500' },
+                    { code: 'TOY-FILTER-1KR', desc: 'Toyota Genuine Engine Oil Filter Cartridge', qty: '1 Pc', price: 'LKR 3,800' },
+                    { code: 'AIR-FIL-RAIZE', desc: 'Engine Intake Air Filter Element', qty: '1 Pc', price: 'LKR 4,900' }
+                ],
+                techNotes: 'Service intervals reset. Brakes, tires, suspension boots, and battery health 94%.'
+            },
+            {
+                id: 'JC-2026-0855',
+                plate: 'WP CBF-6731',
+                model: 'Hyundai Tucson 2.0 AWD 2018',
+                engine: 'Nu 2.0L MPI Petrol / 6-Speed Auto',
+                vin: 'KMHJ381B200-61902',
+                mileage: '67,800 km',
+                customer: 'Roshan Samarasinghe',
+                phone: '+94 77 882 1199',
+                advisor: 'Kavindu Senanayake (Front Desk)',
+                technician: 'Dishan Karunaratne (TK-402)',
+                bay: 'Bay 03 - Mechanical Lift',
+                completedDate: '13 Sep, 15:00',
+                bayTime: '2h 10m',
+                status: 'Delivered',
+                category: 'Brake & Chassis',
+                qaStatus: 'Passed (100%)',
+                qaInspector: 'K. Ranasinghe (Senior QA)',
+                customerConcern: 'Tight turn binding shudder from rear axle during parking maneuvers.',
+                diagnosticFindings: 'AWD electro-hydraulic coupling clutch fluid contaminated; coupling solenoid internal spool sticky.',
+                workScope: 'Rear differential electro-hydraulic coupling flush & Haldex Ravenol fluid renewal',
+                checklist: [
+                    { task: 'Drained electro-hydraulic rear coupling fluid reservoir (found black burnt oil)', time: '13:00' },
+                    { task: 'Flushed coupling hydraulic lines and pressure control solenoid valve', time: '13:45' },
+                    { task: 'Refilled with Ravenol AWD-H Fluid; performed coupling lock test via G-Scan scanner', time: '14:30' },
+                    { task: 'Parking lot full-lock circular turns performed with zero axle bind or tire scrub', time: '15:00' }
+                ],
+                parts: [
+                    { code: 'RAV-AWD-H', desc: 'Ravenol AWD-H Special High Performance Coupling Fluid (1L)', qty: '1 Litre', price: 'LKR 14,500' },
+                    { code: 'DIFF-OIL-7590', desc: 'Hyundai Genuine Hypoid Gear Oil 75W-90 (1L)', qty: '1 Litre', price: 'LKR 6,200' }
+                ],
+                techNotes: 'AWD binding completely eliminated. Coupling pressure modulation verified on diagnostic live graph.'
+            }
+        ];
+
+        // Render All Vehicles Table
+        function renderAllVehiclesTable(records) {
+            const tbody = document.getElementById('allVehiclesTableBody');
+            if (records.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="py-12 text-center text-slate-400">
+                            <svg class="w-8 h-8 mx-auto mb-2 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                            <p class="font-semibold text-slate-600">No vehicle records match your search</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Try searching by a different plate number, customer, or model</p>
+                        </td>
+                    </tr>
+                `;
+                document.getElementById('recordCountText').textContent = 'Showing 0 matching vehicle records';
+                return;
+            }
+
+            tbody.innerHTML = records.map(v => `
+                <tr onclick="openCompletedJobCard('${v.id}')"
+                    class="hover:bg-orange-50/40 cursor-pointer transition-colors group">
+                    <td class="py-3.5 px-4">
+                        <div class="flex items-center gap-2.5">
+                            <span
+                                class="inline-flex items-center gap-1.5 font-mono font-bold text-white text-xs bg-[#0F172A] px-2.5 py-1 rounded tracking-tight shadow-2xs group-hover:ring-1 group-hover:ring-[#F05A28] transition-all">
+                                <span class="w-1.5 h-1.5 rounded-full bg-[#F05A28]"></span>
+                                ${v.plate}
+                            </span>
+                            <div class="flex flex-col min-w-0">
+                                <span class="font-bold text-slate-900 group-hover:text-[#F05A28] transition-colors truncate">${v.model}</span>
+                                <span class="text-[11px] text-slate-400">${v.engine}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800">${v.customer}</span>
+                            <span class="text-[11px] text-slate-400">${v.phone}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 max-w-xs">
+                        <p class="text-slate-700 truncate" title="${v.workScope}">
+                            ${v.workScope}
+                        </p>
+                        <span class="text-[10px] text-slate-400">${v.category}</span>
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-slate-800">${v.bayTime}</span>
+                            <span class="text-[10px] text-slate-400">${v.completedDate}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <div class="flex items-center gap-1.5 text-emerald-700">
+                            <svg class="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="m9 12 2 2 4-4"></path>
+                            </svg>
+                            <span class="font-semibold text-xs">${v.qaInspector}</span>
+                        </div>
+                    </td>
+                    <td class="py-3.5 px-4 whitespace-nowrap">
+                        <span
+                            class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            ${v.status}
+                        </span>
+                    </td>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                        <span
+                            class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 group-hover:bg-[#F05A28] text-slate-700 group-hover:text-white transition-all shadow-2xs">
+                            <span>Job Card</span>
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                <polyline points="15 3 21 3 21 9"></polyline>
+                                <line x1="10" y1="14" x2="21" y2="3"></line>
+                            </svg>
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById('recordCountText').textContent = `Showing ${records.length} of 48 historical completed jobs`;
+        }
+
+        // Live Search Filter
+        function filterAllVehicles() {
+            const query = document.getElementById('allVehiclesSearch').value.toLowerCase().trim();
+            const filtered = ALL_VEHICLES_DATABASE.filter(v => {
+                return !query ||
+                    v.plate.toLowerCase().includes(query) ||
+                    v.model.toLowerCase().includes(query) ||
+                    v.customer.toLowerCase().includes(query) ||
+                    v.id.toLowerCase().includes(query) ||
+                    v.workScope.toLowerCase().includes(query);
+            });
+            renderAllVehiclesTable(filtered);
+        }
+
+        // Open Completed Job Card Modal
+        function openCompletedJobCard(jcId) {
+            const card = ALL_VEHICLES_DATABASE.find(v => v.id === jcId);
+            if (!card) {
+                showToast(`Job card ${jcId} not found`);
+                return;
+            }
+
+            document.getElementById('jcCardNumber').textContent = card.id;
+            document.getElementById('jcPlateBadge').innerHTML = `
+                <span class="w-1.5 h-1.5 rounded-full bg-[#F05A28]"></span>
+                ${card.plate}
+            `;
+            document.getElementById('jcStatusBadge').innerHTML = `
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                ${card.status} & Closed
+            `;
+            document.getElementById('jcQaBadge').innerHTML = `
+                <svg class="w-3.5 h-3.5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                QA Verified (${card.qaStatus})
+            `;
+            document.getElementById('jcCompletedDate').textContent = card.completedDate;
+            document.getElementById('jcBayTime').textContent = card.bayTime;
+
+            document.getElementById('jcEngine').textContent = card.engine;
+            document.getElementById('jcVehicleModel').textContent = card.model;
+            document.getElementById('jcVin').textContent = card.vin;
+            document.getElementById('jcMileage').textContent = card.mileage;
+            document.getElementById('jcCategory').textContent = card.category;
+
+            document.getElementById('jcCustomerName').textContent = card.customer;
+            document.getElementById('jcCustomerPhone').textContent = card.phone;
+            document.getElementById('jcAdvisor').textContent = card.advisor;
+            document.getElementById('jcTechnician').innerHTML = `
+                <span class="w-1.5 h-1.5 rounded-full bg-[#F05A28]"></span>
+                ${card.technician}
+            `;
+            document.getElementById('jcBay').textContent = card.bay;
+
+            document.getElementById('jcConcern').textContent = card.customerConcern;
+            document.getElementById('jcDiagnostics').textContent = card.diagnosticFindings;
+
+            // Render Checklist
+            const checkContainer = document.getElementById('jcChecklistContainer');
+            checkContainer.innerHTML = card.checklist.map(item => `
+                <div class="flex items-center justify-between py-1 px-2 rounded-lg hover:bg-white text-xs transition-colors">
+                    <div class="flex items-center gap-2">
+                        <span class="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-2.5 h-2.5 stroke-current stroke-[3]" fill="none" viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </span>
+                        <span class="text-slate-800 font-medium">${item.task}</span>
+                    </div>
+                    <span class="text-[10px] font-mono text-slate-400 whitespace-nowrap pl-2">${item.time}</span>
+                </div>
+            `).join('');
+
+            // Render Parts Table
+            const partsTable = document.getElementById('jcPartsTableBody');
+            partsTable.innerHTML = card.parts.map(p => `
+                <tr class="hover:bg-slate-50">
+                    <td class="py-2 px-3 font-mono font-bold text-slate-900">${p.code}</td>
+                    <td class="py-2 px-3 text-slate-700">${p.desc}</td>
+                    <td class="py-2 px-3 text-slate-600 font-semibold">${p.qty}</td>
+                    <td class="py-2 px-3 text-right font-bold text-slate-900">${p.price}</td>
+                </tr>
+            `).join('');
+
+            document.getElementById('jcTechNotes').textContent = card.techNotes;
+            document.getElementById('jcQaInspector').textContent = card.qaInspector;
+
+            document.getElementById('completedJobCardModal').classList.remove('hidden');
+        }
+
+        function closeCompletedJobCard() {
+            document.getElementById('completedJobCardModal').classList.add('hidden');
+        }
+
+        function printJobCard() {
+            window.print();
+        }
+
+        function exportHistoryCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,JobCardID,Plate,Model,Customer,Scope,BayTime,QAInspector,Status\n";
+            ALL_VEHICLES_DATABASE.forEach(v => {
+                csvContent += `"${v.id}","${v.plate}","${v.model}","${v.customer}","${v.workScope}","${v.bayTime}","${v.qaInspector}","${v.status}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "VWMS_Serviced_Vehicles_History_DishanK.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("CSV History exported successfully!");
+        }
+
+        function toggleMobileSidebar(open) {
+            const sidebar = document.getElementById('sidebar');
+            const backdrop = document.getElementById('sidebarBackdrop');
+            if (open) {
+                sidebar.classList.remove('-translate-x-full');
+                backdrop.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                backdrop.classList.add('hidden');
+            }
+        }
+
+        function lockTechnicianStation() {
+            if (confirm('Lock Dishan K. Technician Workstation and return to login?')) {
+                window.location.href = '/login';
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeCompletedJobCard();
+                toggleMobileSidebar(false);
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAllVehiclesTable(ALL_VEHICLES_DATABASE);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Account Verified Successfully - VWMS</title>
+    <meta name="description"
+        content="Your mobile number has been successfully verified for your VWMS Customer Portal account.">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="/assets/index.css">
+</head>
+
+<body class="auth-page">
+
+    <!-- ======================================================== -->
+    <!-- 1. HEADER COMPONENT                                      -->
+    <!-- ======================================================== -->
+    <header class="auth-header">
+        <div class="auth-header__container">
+            <!-- Brand Logo on the far left -->
+            <a href="index.html" class="auth-header__logo" aria-label="VWMS Homepage">
+                <div class="auth-header__logo-icon">
+                    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="6" fill="#F05A28" />
+                        <!-- Stylized VW Monogram & Workshop Precision Mark -->
+                        <path d="M6.5 9.5L11 20H13.2L17 11" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M15 9.5L17.5 15.5L21.5 9.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span class="auth-header__logo-text">VWMS</span>
+            </a>
+
+            <!-- Support Action on the far right -->
+            <a href="/support" class="auth-header__support-link">
+                <span>Need support?</span>
+                <svg class="auth-header__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- 2. MAIN CONTENT CONTAINER                                -->
+    <!-- ======================================================== -->
+    <main class="auth-main">
+        <section class="auth-card auth-card--centered">
+
+            <!-- Context Badge -->
+            <div class="auth-card__badge-wrap">
+                <div class="badge badge--success">
+                    <span class="badge__indicator badge__indicator--success"></span>
+                    <span class="badge__text">Verified Successfully</span>
+                </div>
+            </div>
+
+            <!-- Success Animated Checkmark Icon -->
+            <div class="auth-success-icon" aria-hidden="true">
+                <div class="auth-success-icon__circle">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Header Titles -->
+            <div class="auth-card__header">
+                <h1 class="auth-card__title">Mobile verified!</h1>
+                <p class="auth-card__subtitle">
+                    Your mobile number <strong class="auth-card__phone-target">+94 77 123 4567</strong> has been
+                    confirmed. Your customer portal account is now active.
+                </p>
+            </div>
+
+            <!-- Summary Details Box -->
+            <div class="auth-summary">
+                <div class="auth-summary__row">
+                    <span class="auth-summary__label">Customer Name</span>
+                    <span class="auth-summary__value">Kasun Perera</span>
+                </div>
+                <div class="auth-summary__row">
+                    <span class="auth-summary__label">Verified Mobile</span>
+                    <span class="auth-summary__value">+94 77 123 4567</span>
+                </div>
+                <div class="auth-summary__row">
+                    <span class="auth-summary__label">Account Status</span>
+                    <span class="auth-summary__status">
+                        <span class="auth-summary__status-dot"></span>
+                        Active
+                    </span>
+                </div>
+            </div>
+
+            <!-- Primary Call to Action -->
+            <div class="auth-form">
+                <a href="dashboard.html" class="btn btn--primary btn--block">
+                    <span>Go to Dashboard</span>
+                    <svg class="btn__icon-right" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Redirect Notification Hint -->
+            <div class="auth-card__footer">
+                <span class="auth-card__footer-text">
+                    Redirecting to portal in <span id="redirectTimer" class="auth-card__countdown">5</span> seconds...
+                </span>
+            </div>
+        </section>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- 3. FOOTER COMPONENT                                      -->
+    <!-- ======================================================== -->
+    <footer class="auth-footer">
+        <div class="auth-footer__container">
+            <nav class="auth-footer__links" aria-label="Legal and version">
+                <a href="/privacy" class="auth-footer__link">Privacy</a>
+                <a href="/terms" class="auth-footer__link">Terms</a>
+                <span class="auth-footer__divider" aria-hidden="true">|</span>
+                <span class="auth-footer__version">v1.0.0</span>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Auto-Redirect Countdown Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let seconds = 5;
+            const timerEl = document.getElementById('redirectTimer');
+            let targetUrl = 'dashboard.html';
+
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('action') === 'booking' || params.get('booking') === 'true') {
+                const vehicle = params.get('vehicle') || '2018 Toyota Axio (WP CBA-4321)';
+                const date = params.get('date') || 'Oct 24, 2026';
+                const time = params.get('time') || '10:00 AM';
+
+                const badgeText = document.querySelector('.badge__text');
+                if (badgeText) badgeText.textContent = 'Booking Confirmed';
+
+                const titleEl = document.querySelector('.auth-card__title');
+                if (titleEl) titleEl.textContent = 'Service Booking Confirmed!';
+
+                const subtitleEl = document.querySelector('.auth-card__subtitle');
+                if (subtitleEl) {
+                    subtitleEl.innerHTML = `Your intake bay has been secured for <strong>${vehicle}</strong>. A confirmation SMS with your Bay Pass has been sent to <strong class="auth-card__phone-target">+94 77 123 4567</strong>.`;
+                }
+
+                const summaryBox = document.querySelector('.auth-summary');
+                if (summaryBox) {
+                    summaryBox.innerHTML = `
+                        <div class="auth-summary__row">
+                            <span class="auth-summary__label">Booking Reference</span>
+                            <span class="auth-summary__value font-mono" style="color: #F97316; font-weight: 700;">#WP-${Math.floor(10000 + Math.random() * 90000)}</span>
+                        </div>
+                        <div class="auth-summary__row">
+                            <span class="auth-summary__label">Vehicle</span>
+                            <span class="auth-summary__value">${vehicle}</span>
+                        </div>
+                        <div class="auth-summary__row">
+                            <span class="auth-summary__label">Date &amp; Time</span>
+                            <span class="auth-summary__value">${date} • ${time}</span>
+                        </div>
+                        <div class="auth-summary__row">
+                            <span class="auth-summary__label">Assigned Bay</span>
+                            <span class="auth-summary__value" style="color: #10B981; font-weight: 600;">Bay #02 (Express Bay)</span>
+                        </div>
+                    `;
+                }
+
+                const ctaBtn = document.querySelector('.auth-form a');
+                if (ctaBtn) {
+                    ctaBtn.href = 'appointments.html';
+                    const span = ctaBtn.querySelector('span');
+                    if (span) span.textContent = 'Go to Appointments';
+                }
+
+                targetUrl = 'appointments.html';
+            }
+
+            const countdownInterval = setInterval(() => {
+                seconds--;
+                if (timerEl) timerEl.textContent = seconds;
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = targetUrl;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+
+</html>

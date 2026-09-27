@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>Verify Mobile Number - VWMS</title>
+    <meta name="description" content="Verify your mobile number to access your VWMS Customer Portal account.">
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Core Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="auth-page">
+
+    <!-- ======================================================== -->
+    <!-- 1. HEADER COMPONENT                                      -->
+    <!-- ======================================================== -->
+    <header class="auth-header">
+        <div class="auth-header__container">
+            <!-- Brand Logo on the far left -->
+            <a href="index.html" class="auth-header__logo" aria-label="VWMS Homepage">
+                <div class="auth-header__logo-icon">
+                    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="28" height="28" rx="6" fill="#F05A28" />
+                        <!-- Stylized VW Monogram & Workshop Precision Mark -->
+                        <path d="M6.5 9.5L11 20H13.2L17 11" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <path d="M15 9.5L17.5 15.5L21.5 9.5" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </div>
+                <span class="auth-header__logo-text">VWMS</span>
+            </a>
+
+            <!-- Support Action on the far right -->
+            <a href="/support" class="auth-header__support-link">
+                <span>Need support?</span>
+                <svg class="auth-header__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <!-- ======================================================== -->
+    <!-- 2. MAIN CONTENT CONTAINER                                -->
+    <!-- ======================================================== -->
+    <main class="auth-main">
+        <section class="auth-card">
+
+            <!-- Context Badge -->
+            <div class="auth-card__badge-wrap">
+                <div class="badge badge--portal">
+                    <span class="badge__indicator"></span>
+                    <span class="badge__text">OTP Verification</span>
+                </div>
+            </div>
+
+            <!-- Header Titles -->
+            <div class="auth-card__header">
+                <h1 class="auth-card__title">Verify your mobile</h1>
+                <p class="auth-card__subtitle">
+                    We've sent a 6-digit verification code to <strong class="auth-card__phone-target">+94 77 123
+                        4567</strong>. Enter the code below to confirm your account.
+                </p>
+            </div>
+
+            <!-- ==================================================== -->
+            <!-- 3. OTP VERIFICATION FORM                             -->
+            <!-- ==================================================== -->
+            <form action="otp-success.html" method="GET" class="auth-form" id="otpForm" novalidate>
+                <!-- CSRF Token -->
+                <input type="hidden" name="csrf_token" value="csrf_token_placeholder">
+
+                <!-- Hidden full OTP input submitted to backend -->
+                <input type="hidden" name="otp_code" id="otpCode" value="">
+
+                <!-- 6-Digit OTP Box Grid -->
+                <div class="otp-group" role="group" aria-label="Enter 6-digit verification code">
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        autocomplete="one-time-code" aria-label="Digit 1" autofocus>
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        aria-label="Digit 2">
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        aria-label="Digit 3">
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        aria-label="Digit 4">
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        aria-label="Digit 5">
+                    <input type="text" class="otp-group__input" maxlength="1" inputmode="numeric" pattern="[0-9]*"
+                        aria-label="Digit 6">
+                </div>
+
+                <!-- Resend Timer & Action -->
+                <div class="otp-resend">
+                    <span class="otp-resend__text">Didn't receive the code?</span>
+                    <button type="button" class="otp-resend__btn" id="resendBtn" disabled>
+                        Resend in <span id="countdownTimer">59</span>s
+                    </button>
+                </div>
+
+                <!-- Submit CTA Button -->
+                <button type="submit" class="btn btn--primary btn--block" id="verifyBtn">
+                    <span>Verify &amp; Continue</span>
+                    <svg class="btn__icon-right" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+
+            <!-- Back to change mobile number -->
+            <div class="auth-card__footer">
+                <a href="index.html" class="auth-card__back-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    <span>Change mobile number</span>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- ======================================================== -->
+    <!-- 4. FOOTER COMPONENT                                      -->
+    <!-- ======================================================== -->
+    <footer class="auth-footer">
+        <div class="auth-footer__container">
+            <nav class="auth-footer__links" aria-label="Legal and version">
+                <a href="/privacy" class="auth-footer__link">Privacy</a>
+                <a href="/terms" class="auth-footer__link">Terms</a>
+                <span class="auth-footer__divider" aria-hidden="true">|</span>
+                <span class="auth-footer__version">v1.0.0</span>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Minimal Vanilla JavaScript for OTP Auto-Focus, Paste, & Resend Countdown -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputs = Array.from(document.querySelectorAll('.otp-group__input'));
+            const hiddenOtpInput = document.getElementById('otpCode');
+            const otpForm = document.getElementById('otpForm');
+            const resendBtn = document.getElementById('resendBtn');
+            const countdownSpan = document.getElementById('countdownTimer');
+
+            // Handle Input & Navigation
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    // Only allow numeric input
+                    if (!/^\d$/.test(value)) {
+                        input.value = '';
+                        return;
+                    }
+
+                    input.classList.add('otp-group__input--filled');
+
+                    // Auto-advance to next input
+                    if (index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                    syncHiddenOtp();
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace') {
+                        if (!input.value && index > 0) {
+                            inputs[index - 1].focus();
+                            inputs[index - 1].value = '';
+                            inputs[index - 1].classList.remove('otp-group__input--filled');
+                        } else {
+                            input.value = '';
+                            input.classList.remove('otp-group__input--filled');
+                        }
+                        syncHiddenOtp();
+                    } else if (e.key === 'ArrowLeft' && index > 0) {
+                        inputs[index - 1].focus();
+                    } else if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                // Auto-select text on focus
+                input.addEventListener('focus', () => {
+                    input.select();
+                });
+            });
+
+            // Handle Clipboard Paste (e.g. user pastes 6 digits)
+            inputs[0].parentElement.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim();
+                if (/^\d{6}$/.test(pasteData)) {
+                    pasteData.split('').forEach((char, i) => {
+                        if (inputs[i]) {
+                            inputs[i].value = char;
+                            inputs[i].classList.add('otp-group__input--filled');
+                        }
+                    });
+                    inputs[inputs.length - 1].focus();
+                    syncHiddenOtp();
+                }
+            });
+
+            function syncHiddenOtp() {
+                const code = inputs.map(input => input.value).join('');
+                hiddenOtpInput.value = code;
+            }
+
+            // Resend Countdown Timer (60 seconds)
+            let timeLeft = 59;
+            const timerInterval = setInterval(() => {
+                timeLeft--;
+                if (countdownSpan) countdownSpan.textContent = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    resendBtn.disabled = false;
+                    resendBtn.innerHTML = 'Resend Code';
+                    resendBtn.classList.add('otp-resend__btn--active');
+                }
+            }, 1000);
+
+            resendBtn.addEventListener('click', () => {
+                if (resendBtn.disabled) return;
+                alert('A new verification code has been sent to +94 77 123 4567');
+                resendBtn.disabled = true;
+                resendBtn.classList.remove('otp-resend__btn--active');
+                timeLeft = 59;
+                resendBtn.innerHTML = `Resend in <span id="countdownTimer">59</span>s`;
+            });
+
+            // Check if verifying a service booking
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('action') === 'booking' || params.get('booking') === 'true') {
+                const vehicle = params.get('vehicle') || '2018 Toyota Axio (WP CBA-4321)';
+                const date = params.get('date') || 'Oct 24, 2026';
+                const time = params.get('time') || '10:00 AM';
+
+                const titleEl = document.querySelector('.auth-card__title');
+                if (titleEl) titleEl.textContent = 'Confirm Booking via OTP';
+
+                const subtitleEl = document.querySelector('.auth-card__subtitle');
+                if (subtitleEl) {
+                    subtitleEl.innerHTML = `We've sent a 6-digit confirmation code to <strong class="auth-card__phone-target">+94 77 123 4567</strong>. Enter it below to confirm your intake bay reservation for <strong>${vehicle}</strong> on <strong>${date} at ${time}</strong>.`;
+                }
+
+                // Preserve query params in form action
+                otpForm.action = `otp-success.html?${params.toString()}`;
+            }
+
+            // Sync before submit
+            otpForm.addEventListener('submit', (e) => {
+                syncHiddenOtp();
+                if (hiddenOtpInput.value.length < 6) {
+                    e.preventDefault();
+                    inputs.find(inp => !inp.value)?.focus();
+                    alert('Please enter all 6 digits of the verification code.');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
