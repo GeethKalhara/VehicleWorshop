@@ -118,19 +118,19 @@ final class Response
         );
     }
 
-    /**
-     * Shortcut to send $data as CBOR. - sets all the correct headers
-     *
-     * @param array<string, mixed> $data - data
-     */
-    public static function cbor(array $data, HttpStatus $status = HttpStatus::Ok): self
-    {
-        return self::make(
-            cbor_encode($data, CBOR_TEXT | CBOR_KEY_TEXT),
-            [ResponseHeaders::ContentType->value => ['application/cbor']],
-            $status
-        );
-    }
+    // /**
+    //  * Shortcut to send $data as CBOR. - sets all the correct headers
+    //  *
+    //  * @param array<string, mixed> $data - data
+    //  */
+    // public static function cbor(array $data, HttpStatus $status = HttpStatus::Ok): self
+    // {
+    //     return self::make(
+    //         cbor_encode($data, CBOR_TEXT | CBOR_KEY_TEXT),
+    //         [ResponseHeaders::ContentType->value => ['application/cbor']],
+    //         $status
+    //     );
+    // }
 
     /**
      * For bodies that aren't one known string up front — SSE, chunked output.

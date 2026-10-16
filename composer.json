@@ -55,8 +55,7 @@
       "friendsofphp/php-cs-fixer": "^3.95",
       "phpat/phpat": "^0.12.4",
       "phpstan/phpstan": "^2.2",
-      "phpunit/phpunit": "^13.3",
-      "ranvis/ext-cbor-stub": "0.4.11"
+      "phpunit/phpunit": "^13.3"
    },
    "license": "proprietary",
    "autoload": {
