@@ -70,6 +70,7 @@ abstract readonly class ControllerBase implements IController
                 'content' => $html,
                 'title' => $data['title'] ?? 'No Title',
                 'csrf' => $csrf,
+                'content_name' => $template,
                 'assets' => $this->assets->urls,
             ]);
         }
