@@ -1,3 +1,136 @@
-body {
-   color: teal;
+@import "tailwindcss";
+
+@layer base {
+   :root {
+      --primary: #F97316;
+      --primary-hover: #EA580C;
+      --primary-subtle: #FFF7ED;
+      --dark-surface: #111827;
+   }
+
+   body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+   }
 }
+
+/* Payoneer-style subtle concentric background orbits */
+.orbit-ring {
+   border-radius: 9999px;
+   border: 1px solid rgba(255, 255, 255, 0.07);
+   position: absolute;
+   top: 50%;
+   left: 50%;
+   transform: translate(-50%, -50%);
+   pointer-events: none;
+}
+
+.orbit-ring-1 {
+   width: 320px;
+   height: 320px;
+}
+
+.orbit-ring-2 {
+   width: 520px;
+   height: 520px;
+}
+
+.orbit-ring-3 {
+   width: 720px;
+   height: 720px;
+}
+
+/* Subtle glow behind the showcase */
+.ambient-glow {
+   position: absolute;
+   width: 280px;
+   height: 280px;
+   background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, rgba(17, 24, 39, 0) 70%);
+   filter: blur(40px);
+   pointer-events: none;
+}
+
+/* ==========================================================================
+   Reusable Auth Component Classes (Clean, Consistent & Semantic)
+   ========================================================================== */
+
+/* Main Auth Card Container */
+.auth-card {
+   @apply w-full max-w-6xl min-h-[640px] sm:min-h-[700px] lg:h-[760px] bg-[#111827]/95 rounded-[28px] sm:rounded-[36px] overflow-hidden shadow-2xl border border-white/10 flex flex-col lg:flex-row relative z-10 backdrop-blur-md;
+}
+
+/* Split Panels */
+.auth-left-panel {
+   @apply w-full lg:w-[48%] bg-[#111827] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative overflow-hidden text-white;
+}
+
+.auth-right-panel {
+   @apply w-full lg:w-[52%] bg-white p-6 sm:p-10 lg:p-12 flex flex-col justify-between rounded-t-[28px] lg:rounded-t-none lg:rounded-r-[36px] overflow-y-auto;
+}
+
+/* Showcase Typography (Left Panel) */
+.auth-left-heading {
+   @apply text-4xl sm:text-5xl lg:text-[52px] font-bold text-white tracking-tight leading-[1.12] mb-3;
+}
+
+.auth-left-subheading {
+   @apply text-sm sm:text-base text-gray-400 font-medium tracking-wide mb-6;
+}
+
+/* Form Container & Typography (Right Panel) */
+.auth-form-container {
+   @apply w-full max-w-md mx-auto my-auto py-3 sm:py-5;
+}
+
+.auth-form-heading {
+   @apply text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight mb-1.5;
+}
+
+.auth-form-subheading {
+   @apply text-xs sm:text-sm text-gray-500 mb-5 sm:mb-6 leading-relaxed;
+}
+
+/* Form Groups & Labels */
+.form-group {
+   @apply flex flex-col;
+}
+
+.auth-form-label {
+   @apply block text-xs font-semibold text-gray-700 tracking-wider uppercase mb-1.5 select-none;
+}
+
+/* Form Controls */
+.form-input {
+   @apply w-full h-11 sm:h-12 px-4 text-sm text-gray-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400 hover:border-gray-400 shadow-xs;
+}
+
+.form-input-password {
+   @apply w-full h-11 sm:h-12 pl-4 pr-11 text-sm text-gray-900 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all placeholder:text-gray-400 hover:border-gray-400 shadow-xs;
+}
+
+.btn-password-toggle {
+   @apply absolute right-3 text-gray-400 hover:text-gray-600 focus:outline-none p-1.5 rounded-full transition-colors flex items-center justify-center cursor-pointer;
+}
+
+/* Primary CTA Button */
+.btn-primary {
+   @apply w-full h-11 sm:h-12 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-medium text-sm tracking-wide shadow-lg shadow-orange-500/25 active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer;
+}
+
+/* Switch Prompt (Sign Up / Sign In toggle) */
+.auth-switch-prompt {
+   @apply pt-4 sm:pt-5 border-t border-gray-100 text-center text-sm text-gray-600;
+}
+
+.auth-switch-link {
+   @apply font-semibold text-orange-600 hover:text-orange-700 hover:underline transition-colors ml-1;
+}
+
+/* Feedback Alerts */
+.alert-error {
+   @apply mb-4 p-3.5 rounded-2xl bg-red-50 border border-red-200/80 text-red-700 text-xs sm:text-sm flex items-start gap-2.5 shadow-sm;
+}
+
+.alert-success {
+   @apply mb-4 p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs sm:text-sm flex items-start gap-2.5 shadow-sm;
+}
+

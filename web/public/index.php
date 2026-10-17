@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+// When running via PHP's built-in web server (php -S), return false for existing static files
+if (PHP_SAPI === 'cli-server') {
+    $path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    if ($path !== false && is_file(__DIR__ . $path)) {
+        return false;
+    }
+}
+
 require __DIR__ . '/../../vendor/autoload.php';
 
 use Vwork\Shared\Collections\IRegistry;
@@ -38,8 +46,13 @@ $builder->addServices($controllers);
  *  context: array<string, mixed>
  * }>
  */
-$routes = require __DIR__ . '/../config/routes/dummy.php';
-$builder->addRoutes($routes);
+// Routes:
+$dummyRoutes = require __DIR__ . '/../config/routes/dummy.php';
+$builder->addRoutes($dummyRoutes);
+
+$customerRoutes = require __DIR__ . '/../config/routes/customer.php';
+$builder->addRoutes($customerRoutes);
+
 
 $builder->withRouter(RouterTypes::Trie);
 
