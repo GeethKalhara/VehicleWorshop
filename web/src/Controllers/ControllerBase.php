@@ -70,6 +70,7 @@ abstract readonly class ControllerBase implements IController
                 'content' => $html,
                 'title' => $data['title'] ?? 'No Title',
                 'csrf' => $csrf,
+                'content_name' => $template,
                 'assets' => $this->assets->urls,
             ]);
         }
@@ -85,13 +86,7 @@ abstract readonly class ControllerBase implements IController
      */
     protected function payload(array $data, array $accept, HttpStatus $status = HttpStatus::Ok): Response
     {
-        $response = match (self::negotiatePayloadType($accept)) {
-            'application/json' => Response::json($data, $status),
-            'application/cbor' => Response::cbor($data, $status),
-            null => Response::error(HttpStatus::NotAcceptable, 'Supported: application/json, application/cbor'),
-        };
-
-        return $response->addHeader(ResponseHeaders::Vary, 'Accept');
+        return Response::json($data, $status);
     }
 
     /**
@@ -121,53 +116,53 @@ abstract readonly class ControllerBase implements IController
         );
     }
 
-    /**
-     * Picks the client's most preferred supported type: highest q wins,
-     * a specific type beats a wildcard at the same q. Empty Accept means JSON.
-     *
-     * @param list<string> $accept
-     * @return 'application/json'|'application/cbor'|null
-     */
-    private static function negotiatePayloadType(array $accept): ?string
-    {
-        if ($accept === []) {
-            return 'application/json';
-        }
+    // /**
+    //  * Picks the client's most preferred supported type: highest q wins,
+    //  * a specific type beats a wildcard at the same q. Empty Accept means JSON.
+    //  *
+    //  * @param list<string> $accept
+    //  * @return 'application/json'|'application/cbor'|null
+    //  */
+    // private static function negotiatePayloadType(array $accept): ?string
+    // {
+    //     if ($accept === []) {
+    //         return 'application/json';
+    //     }
 
-        $best = null;
-        $bestQ = 0.0;
-        $bestIsWildcard = true;
+    //     $best = null;
+    //     $bestQ = 0.0;
+    //     $bestIsWildcard = true;
 
-        foreach ($accept as $range) {
-            $params = array_map('trim', explode(';', $range));
+    //     foreach ($accept as $range) {
+    //         $params = array_map('trim', explode(';', $range));
 
-            // parse q value
-            $q = 1.0;
-            foreach ($params as $param) {
-                if (str_starts_with($param, 'q=')) {
-                    $q = (float) substr($param, 2);
-                }
-            }
+    //         // parse q value
+    //         $q = 1.0;
+    //         foreach ($params as $param) {
+    //             if (str_starts_with($param, 'q=')) {
+    //                 $q = (float) substr($param, 2);
+    //             }
+    //         }
 
-            // parse Content-Type
-            $type = strtolower(array_shift($params));
-            [$match, $isWildcard] = match ($type) {
-                'application/json', 'application/cbor' => [$type, false],
-                '*/*', 'application/*' => ['application/json', true],
-                default => [null, true],
-            };
+    //         // parse Content-Type
+    //         $type = strtolower(array_shift($params));
+    //         [$match, $isWildcard] = match ($type) {
+    //             'application/json', 'application/cbor' => [$type, false],
+    //             '*/*', 'application/*' => ['application/json', true],
+    //             default => [null, true],
+    //         };
 
-            if ($match === null || $q <= 0.0) {
-                continue;
-            }
+    //         if ($match === null || $q <= 0.0) {
+    //             continue;
+    //         }
 
-            if ($q > $bestQ || ($q === $bestQ && $bestIsWildcard && !$isWildcard)) {
-                $best = $match;
-                $bestQ = $q;
-                $bestIsWildcard = $isWildcard;
-            }
-        }
+    //         if ($q > $bestQ || ($q === $bestQ && $bestIsWildcard && !$isWildcard)) {
+    //             $best = $match;
+    //             $bestQ = $q;
+    //             $bestIsWildcard = $isWildcard;
+    //         }
+    //     }
 
-        return $best;
-    }
+    //     return $best;
+    // }
 }

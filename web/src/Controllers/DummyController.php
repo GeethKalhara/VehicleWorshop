@@ -35,7 +35,11 @@ final readonly class DummyController extends ControllerBase
     #[ControllerAction]
     public function dummy(Request $req, array $attr): Response
     {
-        return $this->view($req, 'dummy', [ 'title' => 'Dummy Page', 'message' => 'Hello Sailor!' ], 'layouts/main');
+        $data = [
+            'title' => 'Dummy Page',
+            'message' => 'Hello Sailor!'
+        ];
+        return $this->view($req, 'dummy', $data, 'layouts/blank');
     }
 
     /** @param StringMap $attr */

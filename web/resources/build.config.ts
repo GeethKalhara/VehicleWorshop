@@ -1,221 +1,203 @@
 /// <reference types="bun" />
-
-// Builds web/resources into web/public/assets/ and writes web/build/assets.json,
-// which PHP's Assets reads to turn "css/staff.css" into "/assets/staff-x4j2av4s.css".
-//
-//   bun run web/resources/build.config.ts                  production
-//   bun run web/resources/build.config.ts --dev            development (readable, source maps)
-//   bun run web/resources/build.config.ts --dev --watch    rebuild on every change
-//
-// Rule: CSS must not url() a file in static/. Every static/ file is an entry
-// point, and Bun crashes when CSS references an entry point.
-// Put images and fonts that CSS needs under css/ instead. static-guard
-// turns the crash into a readable error.
-
-import type { BunPlugin } from 'bun';
-import { mkdir, readdir, rename, rm } from 'node:fs/promises';
-import { existsSync, watch } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
-import tailwindcss from 'tailwindcss-bun-plugin';
-import { stat } from 'node:fs/promises';
-
-const entries = ['staff', 'customer'] as const;
-
-const srcdir = import.meta.dir;                          // web/resources
-const outdir = join(srcdir, '../public/assets');         // served by Caddy at /assets/
-const manifestPath = join(srcdir, 'build/assets.json');  // read by PHP, never served
-
-/** Entry points, relative to srcdir. Also the manifest keys for JS and CSS. */
-const entrypoints = new Set<string>([
-   ...entries.map(e => `css/${e}.css`),
-   ...entries.map(e => `ts/${e}.ts`),
-]);
-
-const isdev = process.argv.includes('--dev');
-const iswatch = process.argv.includes('--watch');
-
-/** Source path relative to root: "web/resources/static/img/a.png" → "static/img/a.png". */
-const fromRoot = (path: string): string => relative(srcdir, resolve(path));
-
-async function listFiles(dir: string): Promise<string[]> {
-   const dirents = await readdir(dir, { recursive: true, withFileTypes: true }).catch(() => []);
-   return dirents
-      .filter(d => d.isFile())
-      .map(d => join(d.parentPath, d.name));
-}
-
-/** Fails the build with a clear message instead of letting Bun crash (see the rule above). */
-const staticGuard: BunPlugin = {
-   name: 'static-guard',
-   setup(build) {
-      build.onResolve({ filter: /static\// }, args => {
-         if (args.importer.endsWith('.css'))
-            throw new Error(`${fromRoot(args.importer)} references ${args.path}: CSS must not url() files in static/, put it under css/ instead`);
-         return undefined;
-      });
-   },
-};
+/// <reference types="node" />
 
 /**
- * Writes the manifest: source path (relative to srcdir) → file under /assets/.
+ * resources build pipeline
+ * ------------------------
+ * Builds css, ts and static/ into assets for the browser, and writes a
+ * manifest PHP's Assets uses to map source paths to hashed files.
  *
- *   "ts/staff.ts"         → "staff-dx01rmp8.js"
- *   "css/staff.css"       → "staff-533e9wa2.css"
- *   "static/img/logo.png" → "static/img/logo-7zjyd5xx.png"
+ *    web/resources  =>  web/public/assets/
+ *                     + web/resources/build/assets.json
  *
- * Also deletes the JS wrapper Bun emits for every static entry point
- * (static/img/logo.png becomes logo.png AND a logo-*.js exporting its URL).
+ *    css/staff.css        => staff-x4j2av4s.css
+ *    static/img/logo.png  => static/img/logo-k3j9x2a1.png
+ *
+ * static/ is hashed and copied as-is; it never goes through the bundler.
+ * Images and fonts imported from CSS/TS are emitted by Bun under media/.
+ *
+ * Usage:
+ *    bun run web/resources/build.config.ts                  production
+ *    bun run web/resources/build.config.ts --dev            development (readable, source maps)
+ *    bun run web/resources/build.config.ts --dev --watch    rebuild on every change
  */
-const manifestPlugin: BunPlugin = {
-   name: 'manifest',
-   setup(build) {
-      build.onEnd(async result => {
-         if (!result.success || !result.metafile)
-            return;
+import type { BuildOutput } from 'bun';
+import { watch as watchfs } from 'fs';
+import { mkdir, readdir, rename, rm } from 'fs/promises';
+import { dirname, join, relative, resolve } from 'path';
+import rawentrypoints from './entrypoints.json';
 
-         const manifest: Record<string, string> = {};
-
-         for (const [file, output] of Object.entries(result.metafile.outputs)) {
-            if (!output.entryPoint)
-               continue;                                      // shared chunk
-
-            const source = fromRoot(output.entryPoint);
-
-            if (source.startsWith('static/')) {
-               await rm(join(outdir, file), { force: true });          // the wrapper
-               await rm(join(outdir, `${file}.map`), { force: true }); // its source map, in dev
-               continue;
-            }
-
-            if (entrypoints.has(source))                   // skips lazy import() modules like ts/staff/board.ts
-               manifest[source] = file.replace(/^\.\//, '');
-         }
-
-         // Static files keep their folder ([dir] in asset naming), so removing
-         // the hash from the output path gives back the source path.
-         for (const output of result.outputs) {
-            const file = relative(outdir, output.path);
-            if (output.kind === 'asset' && file.startsWith('static/') && output.hash)
-               manifest[file.replace(`-${output.hash}`, '')] = file;
-         }
-
-         // Write then rename: PHP never reads a half-written file
-         await mkdir(dirname(manifestPath), { recursive: true });
-         await Bun.write(`${manifestPath}.tmp`, JSON.stringify(manifest, null, 2));
-         await rename(`${manifestPath}.tmp`, manifestPath);
-      });
-   },
+const entries = new Set<string>(rawentrypoints);
+const flags = {
+   dev: process.argv.includes('--dev'),
+   watch: process.argv.includes('--watch'),
 };
 
-/** Removes files this build didn't produce, once they're older than `keepMs`. */
-async function prune(produced: Set<string>, keepMs: number): Promise<void> {
-   for (const file of await listFiles(outdir)) {
-      if (produced.has(file))
+const srcdir = import.meta.dir;                              // web/resources
+const outdir = join(srcdir, '../public/assets');             // served by Caddy at /assets/
+const manifestout = join(srcdir, 'build/assets.json');       // read by PHP, never served
+
+/**
+ * Hashes and copies {srcdir}/static/ into {outdir}/static/, adding each file to the manifest.
+ * Returns the paths written (or already present with the same hash).
+ */
+async function copyStatic(srcdir: string, outdir: string, manifest: Record<string, string>): Promise<Set<string>> {
+   const produced = new Set<string>();
+   const dirents = await readdir(join(srcdir, 'static'), { recursive: true, withFileTypes: true })
+      .catch(e => { if (e.code === 'ENOENT') return []; throw e; });
+
+   for (const dirent of dirents) {
+      if (!dirent.isFile())
          continue;
-      const { mtimeMs } = await stat(file);
-      if (Date.now() - mtimeMs > keepMs)
-         await rm(file, { force: true });
+
+      const src = join(dirent.parentPath, dirent.name);
+      const rel = relative(srcdir, src);                        // static/img/logo.png
+      const bytes = await Bun.file(src).bytes();
+      const hash = Bun.hash(bytes).toString(36).slice(0, 8);
+      const out = rel.replace(/(\.[^./]+)?$/, `-${hash}$1`);    // static/img/logo-k3j9x2a1.png
+      const dest = join(outdir, out);
+
+      if (!(await Bun.file(dest).exists()))                     // hash in the name: same name, same bytes
+         await Bun.write(dest, bytes);
+
+      manifest[rel] = out;
+      produced.add(dest);
    }
+   return produced;
 }
 
-async function build(): Promise<boolean> {
+/**
+ * Maps each entry point (relative to srcdir) to its output file.
+ * Lazy import() modules have an entryPoint too, but aren't in entries, so they're skipped.
+ */
+function createManifest(result: BuildOutput, srcdir: string, entries: Set<string>): Record<string, string> {
+   const manifest: Record<string, string> = {};
+   for (const [file, output] of Object.entries(result.metafile!.outputs)) {
+      if (!output.entryPoint)
+         continue;                                              // shared chunk
+      const source = relative(srcdir, resolve(process.cwd(), output.entryPoint));
+      if (entries.has(source))
+         manifest[source] = file.replace(/^\.\//, '');
+   }
+   return manifest;
+}
+
+/** Builds everything and writes the manifest. Returns the files produced, or null on failure. */
+async function build(srcdir: string, outdir: string, manifestout: string): Promise<Set<string> | null> {
    const started = performance.now();
 
-   await mkdir(outdir, { recursive: true });
    const result = await Bun.build({
       root: srcdir,
-      entrypoints: [
-         ...[...entrypoints].map(e => join(srcdir, e)),
-         ...await listFiles(join(srcdir, 'static')),
-      ],
+      entrypoints: [...entries].map(e => join(srcdir, e)),
       outdir,
       target: 'browser',
       format: 'esm',
-      splitting: !isdev,
-      minify: !isdev,
+      splitting: true,
+      minify: !flags.dev,
       naming: {
          entry: '[name]-[hash].[ext]',
-         chunk: 'chunks/[hash].[ext]',            // a shared chunk's name is just whichever entry Bun saw first
-         asset: '[dir]/[name]-[hash].[ext]',      // keeps static/img/… so the manifest can map it back
+         chunk: 'chunks/[hash].[ext]',                          // a shared chunk's name is just whichever entry Bun saw first
+         asset: 'media/[name]-[hash].[ext]',
       },
-      sourcemap: isdev ? 'external' : 'none',
-      define: {
-         __DEV__: isdev ? 'true' : 'false',
-      },
+      sourcemap: flags.dev ? 'external' : 'none',
+      define: { __DEV__: JSON.stringify(flags.dev) },
       loader: {
-         '.png': 'file',
-         '.jpg': 'file',
-         '.jpeg': 'file',
-         '.webp': 'file',
-         '.gif': 'file',
-         '.svg': 'file',
-         '.ico': 'file',
-         '.woff2': 'file',
+         '.png': 'file', '.jpg': 'file', '.jpeg': 'file', '.webp': 'file',
+         '.gif': 'file', '.svg': 'file', '.ico': 'file', '.woff2': 'file',
          '.txt': 'text',
       },
       publicPath: '/assets/',
       metafile: true,
-      plugins: [tailwindcss, staticGuard, manifestPlugin],
-      drop: isdev ? [] : ['console', 'debugger'],
-      packages: 'bundle',
+      drop: flags.dev ? [] : ['console', 'debugger'],
       throw: false,
    });
 
    if (!result.success) {
       for (const log of result.logs)
          console.error(log);
-      return false;
+      return null;
    }
 
-   const produced = new Set(result.outputs.map(o => o.path));
-   await prune(produced, isdev ? 60_000 : 0);
+   const manifest = createManifest(result, srcdir, entries);
+   const produced = await copyStatic(srcdir, outdir, manifest);
+   for (const output of result.outputs)
+      produced.add(output.path);
+
+   // Write then rename: PHP never reads a half-written file
+   await mkdir(dirname(manifestout), { recursive: true });
+   await Bun.write(`${manifestout}.tmp`, JSON.stringify(manifest, null, 2));
+   await rename(`${manifestout}.tmp`, manifestout);
 
    console.log(`Built in ${Math.round(performance.now() - started)} ms`);
-   return true;
+   return produced;
 }
 
-const ok = await build();
-
-if (!iswatch) {
-   process.exit(ok ? 0 : 1);
+/** Deletes every file under outdir that isn't in keep. */
+async function prune(outdir: string, keep: Set<string>): Promise<void> {
+   const dirents = await readdir(outdir, { recursive: true, withFileTypes: true });
+   await Promise.all(dirents
+      .filter(d => d.isFile())
+      .map(d => join(d.parentPath, d.name))
+      .filter(file => !keep.has(file))
+      .map(file => rm(file, { force: true })));
 }
 
-// --- Watch -------------------------------------------------------------------
-//
-// Bun.build has no watch mode, so this watches the sources itself.
-// views/ is watched too: Tailwind scans it, so a new class in a view
-// needs a CSS rebuild even though no CSS file changed.
-//
-// Saving several files at once (or one editor save firing several events)
-// becomes one rebuild: changes are collected for a short moment first.
-// A change that arrives mid-build triggers exactly one more build after it.
+/**
+ * Rebuilds on every change under srcdir.
+ *
+ * Saves arriving within 50 ms become one rebuild; a change during a build
+ * triggers exactly one more build after it. The previous build's files are
+ * kept for one more round, so a page loaded just before a rebuild still works.
+ */
+async function watch(build: () => Promise<Set<string> | null>): Promise<void> {
+   let previous = new Set<string>();
+   let building = false;
+   let pending = false;
+   let timer: Timer | undefined;
 
-let building = false;
-let pending = false;
-let timer: Timer | undefined;
-
-async function rebuild(): Promise<void> {
-   if (building) {
-      pending = true;
-      return;
+   async function rebuild(): Promise<void> {
+      if (building) {
+         pending = true;
+         return;
+      }
+      building = true;
+      try {
+         do {
+            pending = false;
+            const produced = await build();
+            if (produced) {
+               await prune(outdir, new Set([...previous, ...produced]));
+               previous = produced;
+            }
+         } while (pending);
+      } catch (e) {
+         console.error(e);
+      } finally {
+         building = false;
+      }
    }
 
-   building = true;
-   do {
-      pending = false;
-      await build();
-   } while (pending);
-   building = false;
+   await rebuild();
+
+   watchfs(srcdir, { recursive: true }, (_, filename) => {
+      if (filename?.startsWith('build/'))                       // our own manifest write would retrigger forever
+         return;
+      clearTimeout(timer);
+      timer = setTimeout(() => void rebuild(), 50);
+   });
+
+   console.log(`Watching ${srcdir} for changes…`);
 }
 
-function schedule(): void {
-   clearTimeout(timer);
-   timer = setTimeout(() => void rebuild(), 50);
-}
+// --- main --------------------------------------------------------------------
 
-for (const dir of ['css', 'ts', 'static', 'views']) {
-   if (existsSync(join(srcdir, dir)))
-      watch(join(srcdir, dir), { recursive: true }, schedule);
-}
+const run = () => build(srcdir, outdir, manifestout);
 
-console.log('Watching css/, ts/, static/ and views/ for changes…');
+if (flags.watch) {
+   await watch(run);
+} else {
+   const produced = await run();
+   if (produced)
+      await prune(outdir, produced);
+   process.exit(produced ? 0 : 1);
+}
