@@ -6,8 +6,15 @@ use Random\Randomizer;
 use Vwork\Shared\Collections\IRegistry;
 use Vwork\Web\Utils\AssetParser;
 use Vwork\Web\Utils\CsrfToken;
+use Vwork\Web\Utils\IUtility;
 use Vwork\Web\Utils\View;
 
+/**
+ * @var array<
+ *  class-string<IUtility>,
+ *  Closure(IRegistry): object
+ * >
+ */
 return [
     View::class => static fn (IRegistry $r) => new View(
         dir: 'web/resources/views'

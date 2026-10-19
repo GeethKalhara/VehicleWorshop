@@ -3,9 +3,22 @@
 declare(strict_types=1);
 
 use Vwork\Web\Controllers\DummyController;
+use Vwork\Web\Controllers\IController;
 use Vwork\Web\Http\HttpMethods;
+use Vwork\Web\Middleware\IMiddleware;
 
 /**
+ * @var list<array{
+ *  method: HttpMethods,
+ *  path: string,
+ *  controller: array{
+ *    class: class-string<IController>,
+ *    method: string
+ *  },
+ *  middleware: list<class-string<IMiddleware>>,
+ *  context: array<string, mixed>
+ * }>
+ *
  * Sample route. No middleware, so it needs no context.
  */
 return [

@@ -26,23 +26,23 @@ final readonly class CustomerAuthController extends ControllerBase
      * @param StringMap $attr
      */
     #[ControllerAction]
-    public function showLogin(Request $req, array $attr): Response
+    public function loginPage(Request $req, array $attr): Response
     {
         // -------------------------------------------------------------
         // When we have a DB later, we might check if user is already logged in:
         // if ($this->authService->isAuthenticated($req)) return Response::redirect('/customer/dashboard');
         // -------------------------------------------------------------
 
+        return $this->renderLogin($req);
+    }
 
-        return $this->view($req, 'Customer/login', [
-            'title'             => 'Sign In - AutoCare Customer Portal',
-            'actionUrl'         => '/customer/login',
-            'signupUrl'         => '/customer/register',
-            'forgotPasswordUrl' => '/customer/forgot-password',
-            'contactUrl'        => '#',
-            'error'             => null,
-            'success'           => null,
-            'mobile'            => null,
+    private function renderLogin(Request $req, ?string $error = null, ?string $success = null, string $mobile = ''): Response
+    {
+        return $this->view($req, 'customer/login', [
+            'title'     => 'Sign In - AutoCare Customer Portal',
+            'error'     => $error,
+            'success'   => $success,
+            'mobile'    => $mobile,
         ], 'layouts/auth');
     }
 
@@ -52,27 +52,26 @@ final readonly class CustomerAuthController extends ControllerBase
      * @param StringMap $attr
      */
     #[ControllerAction]
-    public function showRegister(Request $req, array $attr): Response
+    public function registerPage(Request $req, array $attr): Response
     {
-        return $this->view($req, 'Customer/register', [
-            'title'             => 'Create Account - AutoCare Customer Portal',
-            'actionUrl'         => '/customer/register',
-            'loginUrl'          => '/customer/login',
-            'contactUrl'        => '#',
-            'error'             => null,
-            'success'           => null,
-            'old'               => [],
-        ], 'layouts/auth');
+        return $this->renderRegister($req);
     }
 
     /**
-     * Alias for showRegister
-     *
-     * @param StringMap $attr
+     * @param array{
+     *  first_name?: string,
+     *  last_name?: string,
+     *  mobile?: string,
+     *  email?: string
+     * } $old
      */
-    #[ControllerAction]
-    public function showSignup(Request $req, array $attr): Response
+    private function renderRegister(Request $req, ?string $error = null, ?string $success = null, array $old = []): Response
     {
-        return $this->showRegister($req, $attr);
+        return $this->view($req, 'customer/register', [
+            'title'   => 'Create Account - AutoCare Customer Portal',
+            'error'   => $error,
+            'success' => $success,
+            'old' => $old + array_fill_keys(['first_name', 'last_name', 'mobile', 'email'], ''),
+        ], 'layouts/auth');
     }
 }

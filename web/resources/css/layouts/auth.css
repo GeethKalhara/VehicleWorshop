@@ -13,6 +13,22 @@
    }
 }
 
+body {
+  height: 100%;
+  min-height: 100vh;
+  background-color: #020617; /* bg-slate-950 */
+  color: #0f172a; /* text-slate-900 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+body::selection {
+  background-color: #f97316; /* selection:bg-orange-500 */
+  color: #fff; /* selection:text-white */
+}
+
 /* Payoneer-style subtle concentric background orbits */
 .orbit-ring {
    border-radius: 9999px;
