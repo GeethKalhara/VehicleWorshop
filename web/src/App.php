@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Vwork\Web;
 
+use Vwork\Web\Http\Headers\ResponseHeaders;
+use Vwork\Web\Http\HttpMethods;
 use Vwork\Web\Http\HttpStatus;
 use Vwork\Web\Http\Request;
 use Vwork\Web\Http\Response;
@@ -39,6 +41,15 @@ final readonly class App
     public function handleRequest(Request $request): Response
     {
         $match = $this->router->match($request->method, $request->path);
+
+        // OPTIONS returns the available methods for a specific route
+        if ($request->method === HttpMethods::OPTIONS) {
+            return Response::make(
+                '',
+                [ResponseHeaders::Allow->value => array_map(static fn (HttpMethods $v): string => $v->value, $match->allowed)],
+                HttpStatus::Ok
+            );
+        }
 
         return match ($match->status) {
             RouteMatchStatus::Found => ($match->handler ?? throw new WebError('Found route has no handler'))->handle($request, $match->params),
