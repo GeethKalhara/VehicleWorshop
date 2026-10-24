@@ -26,7 +26,7 @@ import { watch as watchfs } from 'fs';
 import { mkdir, readdir, rename, rm } from 'fs/promises';
 import { dirname, join, relative, resolve } from 'path';
 import tailwind from 'tailwindcss-bun-plugin';
-import rawentrypoints from './entrypoints.jsonc';
+import rawentrypoints from './resources/entrypoints.jsonc';
 
 const entries = new Set<string>(rawentrypoints);
 const flags = {
@@ -34,8 +34,8 @@ const flags = {
    watch: process.argv.includes('--watch'),
 };
 
-const srcdir = import.meta.dir;                              // web/resources
-const outdir = join(srcdir, '../public/assets');             // served by Caddy at /assets/
+const srcdir = join(import.meta.dir, './resources/');                              // web/resources
+const outdir = join(import.meta.dir, './public/assets');             // served by Caddy at /assets/
 const manifestout = join(srcdir, 'build/assets.json');       // read by PHP, never served
 
 /**

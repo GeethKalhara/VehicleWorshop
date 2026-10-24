@@ -3,8 +3,8 @@
    "private": true,
    "type": "module",
    "scripts": {
-      "build:web": "bun run ./web/resources/build.config.ts",
-      "dev:web": "bun run ./web/resources/build.config.ts --dev --watch",
+      "build:web": "bun run ./web/build.config.ts",
+      "dev:web": "bun run ./web/build.config.ts --dev --watch",
       "typecheck:web": "tsc --build --noEmit",
       "test:web": "playwright test --config=./web/test/e2e/playwright.config.ts"
    },
