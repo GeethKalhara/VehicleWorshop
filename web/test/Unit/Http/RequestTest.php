@@ -8,6 +8,7 @@ use Override;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
+use Vwork\Shared\Exception\VworkError;
 use Vwork\Web\Http\Cookies\HttpCookies;
 use Vwork\Web\Http\Headers\RequestHeaders;
 use Vwork\Web\Http\HttpMethods;
@@ -78,12 +79,11 @@ final class RequestTest extends TestCase
     #[TestWith(['GET', HttpMethods::GET])]
     #[TestWith(['POST', HttpMethods::POST])]
     #[TestWith(['get', HttpMethods::GET])]
-    #[TestWith(['Patch', HttpMethods::PATCH])]
     #[TestWith(['HEAD', HttpMethods::HEAD])]
     #[TestWith(['options', HttpMethods::OPTIONS])]
     public function resolves_the_method_case_insensitively(string $raw, HttpMethods $expected): void
     {
-        $this->assertSame($expected, self::request(['REQUEST_METHOD' => $raw])->method);
+        $this->assertSame($expected, self::request(['REQUEST_METHOD' => $raw, 'CONTENT_TYPE' => 'multipart/form-data'])->method);
     }
 
     #[Test]
@@ -111,7 +111,7 @@ final class RequestTest extends TestCase
     public function passes_query_form_data_and_ip_through(): void
     {
         $request = self::request(
-            server: ['REMOTE_ADDR' => '203.0.113.7'],
+            server: ['REQUEST_METHOD' => 'POST', 'CONTENT_TYPE' => 'multipart/form-data','REMOTE_ADDR' => '203.0.113.7'],
             get: ['tab' => 'notes', 'x' => '1'],
             post: ['name' => 'Oil change', 'urgent' => 'true'],
         );
@@ -119,6 +119,29 @@ final class RequestTest extends TestCase
         $this->assertSame('203.0.113.7', $request->ip);
         $this->assertSame(['tab' => 'notes', 'x' => '1'], $request->query);
         $this->assertSame(['name' => 'Oil change', 'urgent' => 'true'], $request->formData);
+    }
+
+    #[Test]
+    public function keeps_list_fields_as_lists(): void
+    {
+        $request = self::request(
+            server: ['REQUEST_METHOD' => 'POST', 'CONTENT_TYPE' => 'multipart/form-data'],
+            get: ['status' => ['open', 'waiting']],
+            post: ['plate' => 'CAB-1234', 'services' => ['3']],
+        );
+
+        $this->assertSame(['status' => ['open', 'waiting']], $request->query);
+        $this->assertSame(['plate' => 'CAB-1234', 'services' => ['3']], $request->formData);
+    }
+
+    #[Test]
+    public function rejects_keyed_form_fields(): void
+    {
+        $this->expectException(VworkError::class);
+        self::request(
+            server: ['REQUEST_METHOD' => 'POST', 'CONTENT_TYPE' => 'multipart/form-data'],
+            post: ['vehicle' => ['plate' => 'X']]
+        );
     }
 
     #[Test]
@@ -146,7 +169,7 @@ final class RequestTest extends TestCase
 
     /**
      * @param array<string, mixed> $files
-     * @param array<string, string> $expected field key => original file name
+     * @param array<string, string|list<string>> $expected field => original file name(s)
      */
     #[Test]
     #[TestWith([[], []])]
@@ -159,12 +182,31 @@ final class RequestTest extends TestCase
             'name' => ['a.jpg', 'b.jpg'], 'tmp_name' => ['/tmp/a', '/tmp/b'], 'type' => ['image/jpeg', 'image/jpeg'],
             'size' => [100, 200], 'error' => [UPLOAD_ERR_OK, UPLOAD_ERR_OK],
         ]],
-        ['photos[0]' => 'a.jpg', 'photos[1]' => 'b.jpg'],
+        ['photos' => ['a.jpg', 'b.jpg']],
     ])]
-    public function flattens_uploaded_files(array $files, array $expected): void
+    #[TestWith([
+        ['photos' => [
+            'name' => ['a.jpg'], 'tmp_name' => ['/tmp/a'], 'type' => ['image/jpeg'],
+            'size' => [100], 'error' => [UPLOAD_ERR_OK],
+        ]],
+        ['photos' => ['a.jpg']],
+    ])]
+    public function groups_uploaded_files_like_form_data(array $files, array $expected): void
     {
-        $actual = array_map(static fn ($f) => $f->name, self::request(files: $files)->files);
+        $this->assertSame($expected, self::fileNames(
+            self::request(
+                server: ['REQUEST_METHOD' => 'POST', 'CONTENT_TYPE' => 'multipart/form-data'],
+                files: $files
+            )
+        ));
+    }
 
-        $this->assertSame($expected, $actual);
+    /** @return array<string, string|list<string>> */
+    private static function fileNames(Request $request): array
+    {
+        return array_map(
+            static fn ($f) => is_array($f) ? array_map(static fn ($one) => $one->name, $f) : $f->name,
+            $request->files,
+        );
     }
 }

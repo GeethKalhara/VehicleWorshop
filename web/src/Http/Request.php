@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Vwork\Web\Http;
 
+use RequestParseBodyException;
 use Vwork\Shared\Collections\EnumList;
 use Vwork\Shared\Types\Cast;
 use Vwork\Web\Http\Cookies\HttpCookies;
 use Vwork\Web\WebException;
 use Vwork\Web\Http\Headers\RequestHeaders;
+use Vwork\Web\WebError;
 
 /**
  * What came in.
@@ -26,9 +28,9 @@ final readonly class Request
     /**
      * @param EnumList<RequestHeaders, list<string>> $headers
      * @param EnumList<HttpCookies, string> $cookies
-     * @param array<string, string> $query
-     * @param array<string, string> $formData
-     * @param array<string, UploadedFile> $files
+     * @param array<string, string|list<string>> $query
+     * @param array<string, string|list<string>> $formData
+     * @param array<string, UploadedFile|list<UploadedFile>> $files
      */
     private function __construct(
         public HttpMethods $method,
@@ -80,7 +82,7 @@ final readonly class Request
      * @param EnumList<RequestHeaders, list<string>> $headers
      * @return EnumList<HttpCookies, string>
      */
-    public static function extractCookies(EnumList $headers): EnumList
+    private static function extractCookies(EnumList $headers): EnumList
     {
         /** @var string */
         $raw = $headers[RequestHeaders::Cookie][0] ?? '';
@@ -100,18 +102,15 @@ final readonly class Request
     }
 
     /**
-     * Flattens $_FILES, which comes in two shapes:
-     * *  single: ['name' => 'a.jpg', 'tmp_name' => '/tmp/1', ...]
-     * *  multi:  ['name' => ['a.jpg', 'b.jpg'], 'tmp_name' => [...], ...]
+     * Normalises $_FILES (or request_parse_body()'s files) to the same shape as formData:
+     *   `photo`    → UploadedFile
+     *   `photos[]` → list<UploadedFile>
      *
-     * Multi-file fields become one entry per index, keyed "{field}[{index}]".
-     *
-     * @param array<mixed, mixed> $rawFiles - typically $_FILES
-     * @return array<string, UploadedFile>
+     * @param array<mixed, mixed> $rawFiles
+     * @return array<string, UploadedFile|list<UploadedFile>>
      */
     private static function extractFiles(array $rawFiles): array
     {
-        /** @var array<string, UploadedFile> */
         $acc = [];
 
         /**
@@ -131,16 +130,16 @@ final readonly class Request
          * } $fileData
          */
         foreach ($rawFiles as $field => $fileData) {
-
             if (is_array($fileData['name'])) {
-                foreach (array_keys($fileData['name']) as $index) {
-                    $acc["{$field}[{$index}]"] = UploadedFile::fromMultiArray($fileData, $index);
+                $list = [];
+                foreach ($fileData['name'] as $index => $name) {
+                    $list[] = UploadedFile::fromMultiArray($fileData, $index);
                 }
+                $acc[$field] = $list;
             } else {
                 $acc[$field] = UploadedFile::fromSingleArray($fileData);
             }
         }
-
         return $acc;
     }
 
@@ -152,6 +151,7 @@ final readonly class Request
      * on Request instead.
      *
      * @throws WebException if the method isn't one HttpMethods knows
+     * @throws WebError on bad requests that we do not support
      */
     public static function fromGlobals(): self
     {
@@ -159,6 +159,20 @@ final readonly class Request
         $method = HttpMethods::tryFrom($methodString);
         if ($method === null) {
             throw new WebException("Unsupported HTTP method: {$methodString}");
+        }
+
+        // php doesn't automaticaly populate PUT PATCH requests to $_POST & $_FILES
+        $post = [];
+        $files = [];
+        try {
+            [$post, $files] = match ($method) {
+                HttpMethods::POST => [$_POST, $_FILES],
+                HttpMethods::PUT,
+                HttpMethods::PATCH => request_parse_body(['post_max_size' => '10M', 'upload_max_filesize' => '10M',]),
+                default => [[], []]
+            };
+        } catch (RequestParseBodyException $e) {
+            throw new WebError('Wrong fucking media type', $e);
         }
 
         // body, formData and files all get captured here together: PHP eats
@@ -176,11 +190,11 @@ final readonly class Request
             body: $body,
             headers: $headers,
             cookies: self::extractCookies($headers),
-            files: self::extractFiles($_FILES),
+            files: self::extractFiles($files),
             ip: Cast::string($_SERVER['REMOTE_ADDR']),
             path: explode('?', Cast::string($_SERVER['REQUEST_URI']), 2)[0],
-            query: Cast::stringMap($_GET),
-            formData: Cast::stringMap($_POST),
+            query: Cast::stringListMap($_GET),
+            formData: Cast::stringListMap($post),
         );
     }
 }

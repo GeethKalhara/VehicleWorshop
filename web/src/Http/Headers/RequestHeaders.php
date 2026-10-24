@@ -19,6 +19,7 @@ enum RequestHeaders: string implements HttpHeader
     case Cookie = 'Cookie';
     case Host = 'Host';
     case Origin = 'Origin';
+    case SecFetchSite = 'Sec-Fetch-Site';
     case UserAgent = 'User-Agent';
     case XCsrfToken = 'X-CSRF-Token';
 
@@ -36,6 +37,7 @@ enum RequestHeaders: string implements HttpHeader
             self::Cookie,
             self::Host,
             self::Origin,
+            self::SecFetchSite,
             self::UserAgent,
             self::XCsrfToken => false,
         };
