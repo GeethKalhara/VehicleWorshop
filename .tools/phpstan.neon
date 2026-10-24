@@ -20,11 +20,8 @@ parameters:
    # with no config edit needed.
 
    excludePaths:
-      - ../web/public/assets/*
+      - ../web/public/*
       - ../web/node_modules/*
-      # Templates get their variables from extract() inside View::render(),
-      # which PHPStan can't see, so every variable looks undefined.
-      - ../web/resources/views/*
       - ../web/test/Fixtures/*
 
    ignoreErrors:
@@ -54,5 +51,5 @@ services:
       tags: [phpat.test]
    -
       class: Vwork\Test\Architecture\WebRules
-      
+
       tags: [phpat.test]

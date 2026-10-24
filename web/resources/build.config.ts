@@ -25,7 +25,8 @@ import type { BuildOutput } from 'bun';
 import { watch as watchfs } from 'fs';
 import { mkdir, readdir, rename, rm } from 'fs/promises';
 import { dirname, join, relative, resolve } from 'path';
-import rawentrypoints from './entrypoints.json';
+import tailwind from 'tailwindcss-bun-plugin';
+import rawentrypoints from './entrypoints.jsonc';
 
 const entries = new Set<string>(rawentrypoints);
 const flags = {
@@ -108,6 +109,7 @@ async function build(srcdir: string, outdir: string, manifestout: string): Promi
       },
       publicPath: '/assets/',
       metafile: true,
+      plugins: [tailwind],
       drop: flags.dev ? [] : ['console', 'debugger'],
       throw: false,
    });

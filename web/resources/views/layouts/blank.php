@@ -6,6 +6,13 @@
  * @var string $content_name
  * @var array<string, string> $assets
  */
+
+$__filename__ = 'layouts/' . basename(__FILE__, '.php');
+$__layout_ts__ = $assets["ts/$__filename__.ts"] ?? false;
+$__layout_css__ = $assets["css/$__filename__.css"] ?? false;
+$__content_ts__ = $assets["ts/$content_name.ts"] ?? false;
+$__content_css__ = $assets["css/$content_name.css"] ?? false;
+
 ?>
 
 <!DOCTYPE html>
@@ -17,18 +24,22 @@
 
     <title><?= htmlspecialchars($title) ?></title>
 
-    <!-- layout assets -->
-    <link rel="stylesheet" href="<?= $assets['css/blank.css'] ?>">
-    <script src="<?= $assets['ts/blank.ts'] ?>"></script>
+    <?php if ($__layout_css__): ?>
+        <link rel="stylesheet" href="<?= $__layout_css__ ?>">
+    <?php endif; ?>
 
-    <!-- content css -->
-    <?php if ($content_css = $assets["css/$content_name.css"] ?? false): ?>
-        <link rel="stylesheet" href="<?= $content_css ?>">
+    <?php if ($__layout_ts__): ?>
+        <script src="<?= $__layout_ts__ ?>"></script>
     <?php endif; ?>
-    <!-- content ts -->
-    <?php if ($content_ts = $assets["ts/$content_name.ts"] ?? false): ?>
-        <script src="<?= $content_ts ?>"></script>
+
+    <?php if ($__content_css__): ?>
+        <link rel="stylesheet" href="<?= $__content_css__ ?>">
     <?php endif; ?>
+
+    <?php if ($__content_ts__): ?>
+        <script src="<?= $__content_ts__ ?>"></script>
+    <?php endif; ?>
+    
 </head>
 <body>
     <h1>Hello Blank</h1>

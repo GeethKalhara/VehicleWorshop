@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 use Vwork\Shared\Collections\IRegistry;
 use Vwork\Web\Controllers\DummyController;
-use Vwork\Web\Utils\CsrfToken;
-use Vwork\Web\Utils\View;
+use Vwork\Web\Controllers\CustomerAuthController;
+use Vwork\Web\Controllers\IController;
 
 /**
- * Every controller the app can route to, and how to build it.
- * Each is built once, the first time a route needs it.
+ * @var array<
+ *  class-string<IController>,
+ *  Closure(IRegistry): object
+ * >
  */
 return [
-    DummyController::class => static fn (IRegistry $r): DummyController => new DummyController($r),
+    DummyController::class        => static fn (IRegistry $r): DummyController => new DummyController($r),
+    CustomerAuthController::class => static fn (IRegistry $r): CustomerAuthController => new CustomerAuthController($r),
 ];

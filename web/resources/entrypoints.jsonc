@@ -1,0 +1,16 @@
+[
+   // layouts
+   "css/layouts/blank.css",
+   "ts/layouts/blank.ts",
+   "css/layouts/auth.css",
+   "ts/layouts/auth.ts",
+
+   // customer
+   // "css/customer/login.css",
+   // "ts/customer/login.ts",
+   // "css/customer/register.css",
+   // "ts/customer/register.ts",
+
+   // dummy
+   "css/dummy.css"
+]
