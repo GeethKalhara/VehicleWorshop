@@ -5,13 +5,11 @@
  * @var string $content
  * @var string $content_name
  * @var array<string, string> $assets
+ * @var \Closure(string|false|null $href): string $renderStylesheet
+ * @var \Closure(string|false|null $href, bool ...$flags): string $renderScript
  */
 
 $__filename__ = 'layouts/' . basename(__FILE__, '.php');
-$__layout_ts__ = $assets["ts/$__filename__.ts"] ?? false;
-$__layout_css__ = $assets["css/$__filename__.css"] ?? false;
-$__content_ts__ = $assets["ts/$content_name.ts"] ?? false;
-$__content_css__ = $assets["css/$content_name.css"] ?? false;
 
 ?>
 
@@ -24,22 +22,11 @@ $__content_css__ = $assets["css/$content_name.css"] ?? false;
 
     <title><?= htmlspecialchars($title) ?></title>
 
-    <?php if ($__layout_css__): ?>
-        <link rel="stylesheet" href="<?= $__layout_css__ ?>">
-    <?php endif; ?>
+    <?= $renderStylesheet($assets["css/$__filename__.css"] ?? null) ?>
+    <?= $renderStylesheet($assets["css/$content_name.css"] ?? null) ?>
 
-    <?php if ($__layout_ts__): ?>
-        <script src="<?= $__layout_ts__ ?>" defer></script>
-    <?php endif; ?>
-
-    <?php if ($__content_css__): ?>
-        <link rel="stylesheet" href="<?= $__content_css__ ?>">
-    <?php endif; ?>
-
-    <?php if ($__content_ts__): ?>
-        <script src="<?= $__content_ts__ ?>" defer></script>
-    <?php endif; ?>
-
+    <?= $renderScript($assets["ts/$__filename__.ts"] ?? null) ?>
+    <?= $renderScript($assets["ts/$content_name.ts"] ?? null) ?>
 </head>
 <body>
     <main>

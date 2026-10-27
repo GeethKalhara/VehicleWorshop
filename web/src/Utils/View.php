@@ -45,6 +45,9 @@ final readonly class View implements IUtility
             throw new WebError("View not found: {$template}");
         }
 
+        $data['renderStylesheet'] = $this->renderStylesheet(...);
+        $data['renderScript']     = $this->renderScript(...);
+
         ob_start();
         try {
             // Closure to avoid leaking our locals to the view.
@@ -58,5 +61,36 @@ final readonly class View implements IUtility
         }
 
         return (string) ob_get_clean();
+    }
+
+    private function renderStylesheet(string|false|null $href): string
+    {
+        if ($href === null || $href === false || $href === '') {
+            return '';
+        }
+
+        $href = htmlspecialchars($href, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return <<<HTML
+            <link rel="stylesheet" href="{$href}">
+        HTML;
+    }
+
+    private function renderScript(
+        string|false|null $href,
+        bool $defer = true,
+        bool $hold = false,
+    ): string {
+        if ($href === null || $href === false || $href === '') {
+            return '';
+        }
+
+        $href  = htmlspecialchars($href, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $defer = $defer ? ' defer' : '';
+        $hold  = $hold ? ' hold' : '';
+
+        return <<<HTML
+            <script{$defer}{$hold} src="{$href}"></script>
+        HTML;
     }
 }
