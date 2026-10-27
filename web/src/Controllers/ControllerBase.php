@@ -25,7 +25,7 @@ use Vwork\Web\Utils\View;
  */
 abstract readonly class ControllerBase implements IController
 {
-    private View $view;
+    protected View $view;
     private CsrfToken $csrf;
     private AssetParser $assets;
 
@@ -96,15 +96,18 @@ abstract readonly class ControllerBase implements IController
      * writes one event with it, and the event goes straight to the browser.
      * The stream ends when $source returns.
      *
-     * @param Closure(Closure(string $event, array<string, mixed> $data): void $emit): void $source
+     * @param Closure(Closure(string $event, string $data): void $emit): void $source
      */
     protected function sse(Closure $source): Response
     {
         return Response::stream(
             static function () use ($source): void {
-                $source(static function (string $event, array $data): void {
-                    $json = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-                    echo "event: {$event}\ndata: {$json}\n\n";
+                $source(static function (string $event, string $data): void {
+                    echo "event: {$event}\n";
+                    foreach (explode("\n", $data) as $line) {
+                        echo "data: {$line}\n";
+                    }
+                    echo "\n";
                     flush();
                 });
             },

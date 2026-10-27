@@ -39,17 +39,21 @@ final readonly class DummyController extends ControllerBase
             'title' => 'Dummy Page',
             'message' => 'Hello Sailor!'
         ];
-        return $this->view($req, 'dummy', $data, 'layouts/blank');
+        return $this->view($req, 'dummy/dummy', $data, 'layouts/blank');
     }
 
     /** @param StringMap $attr */
     #[ControllerAction]
     public function greeting(Request $req, array $attr): Response
     {
-        return self::sse(static function (Closure $emit): void {
+        $render = fn (string $message) => $this->view->render('dummy/greeting', [ 'message' => $message ]);
+        return self::sse(static function (Closure $emit) use ($render): void {
             while (connection_aborted() === 0) {
                 $token = bin2hex(random_bytes(8));
-                $emit('dummy', ['message' => $token]);
+                $emit(
+                    'dummy:event',
+                    $render($token)
+                );
                 sleep(2);
             }
         });

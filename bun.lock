@@ -5,7 +5,7 @@
     "": {
       "name": "vwork",
       "dependencies": {
-        "@flamefrontend/sse-runtime-core": "~0.10.0",
+        "@sneze/x-attributes": "github:sneera-p/x-attr#v0.2.0",
         "lodash": "~4.18.0",
       },
       "devDependencies": {
@@ -19,8 +19,6 @@
     },
   },
   "packages": {
-    "@flamefrontend/sse-runtime-core": ["@flamefrontend/sse-runtime-core@0.10.0", "", {}, "sha512-TUd7Uv/NkYI0qCv2EzsCRnCLqBRxpMJDc4CZVUcpxIZ6ol8gOW8SAvIm3COyRrqkDCZjOX6hHoQjtYIiOuA6OQ=="],
-
     "@jridgewell/gen-mapping": ["@jridgewell/gen-mapping@0.3.13", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.0", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA=="],
 
     "@jridgewell/remapping": ["@jridgewell/remapping@2.3.5", "", { "dependencies": { "@jridgewell/gen-mapping": "^0.3.5", "@jridgewell/trace-mapping": "^0.3.24" } }, "sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ=="],
@@ -32,6 +30,8 @@
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
 
     "@playwright/test": ["@playwright/test@1.63.0", "", { "dependencies": { "playwright": "1.63.0" }, "bin": { "playwright": "cli.js" } }, "sha512-oxMK4vllB9RK5NQ2l1pq1IfOf2AvnEuj/vYGDj0H2nMtmtZpKtCwt/l00GEO6xjGfpBNAvjovvYdCm50dRQkpQ=="],
+
+    "@sneze/x-attributes": ["@sneze/x-attributes@github:sneera-p/x-attr#d14b922", {}, "sneera-p-x-attr-d14b922", "sha512-ZlJ5c5fXt6DXeP0jmtQk9Yw3M0z1gLvxCmXMljI7gA22+gxNt/ZZt01Rl2LeA+mm1v5BfVAgspELpkpBbDaCwA=="],
 
     "@tailwindcss/node": ["@tailwindcss/node@4.3.3", "", { "dependencies": { "@jridgewell/remapping": "^2.3.5", "enhanced-resolve": "^5.24.1", "jiti": "^2.7.0", "lightningcss": "1.32.0", "magic-string": "^0.30.21", "source-map-js": "^1.2.1", "tailwindcss": "4.3.3" } }, "sha512-/T8IKEsf9VTU6tLjgC7+sv2mOPtQxzE2jMw7u4Tt40Tx+QSZxpzh95/H6cMKoja9XuW7iMdLJYBB0o9G1CaAgg=="],
 

@@ -38,7 +38,7 @@ return [
     ],
     [
         'method' => HttpMethods::GET,
-        'path' => '/greeting',
+        'path' => '/dummy/greeting',
         'controller' => ['class' => DummyController::class, 'method' => 'greeting'],
         'middleware' => [],
         'context' => [],

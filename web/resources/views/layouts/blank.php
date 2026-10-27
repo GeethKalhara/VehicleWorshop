@@ -29,7 +29,7 @@ $__content_css__ = $assets["css/$content_name.css"] ?? false;
     <?php endif; ?>
 
     <?php if ($__layout_ts__): ?>
-        <script src="<?= $__layout_ts__ ?>"></script>
+        <script src="<?= $__layout_ts__ ?>" defer></script>
     <?php endif; ?>
 
     <?php if ($__content_css__): ?>
@@ -37,12 +37,11 @@ $__content_css__ = $assets["css/$content_name.css"] ?? false;
     <?php endif; ?>
 
     <?php if ($__content_ts__): ?>
-        <script src="<?= $__content_ts__ ?>"></script>
+        <script src="<?= $__content_ts__ ?>" defer></script>
     <?php endif; ?>
-    
+
 </head>
 <body>
-    <h1>Hello Blank</h1>
     <main>
         <?= $content ?>
     </main>
