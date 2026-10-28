@@ -26,8 +26,8 @@ $current_route = $active_route ?? 'overview';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="<?= htmlspecialchars($csrf ?? '') ?>">
-    <title><?= htmlspecialchars($title ?? 'Customer Portal - AutoCare') ?></title>
+    <meta name="csrf-token" content="<?= htmlspecialchars($csrf) ?>">
+    <title><?= htmlspecialchars($title) ?></title>
 
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -216,7 +216,7 @@ $current_route = $active_route ?? 'overview';
                 <div class="subnav-actions">
                     <!-- Log Out Form with CSRF Protection -->
                     <form method="POST" action="/customer/logout" id="customer-logout-form">
-                        <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf ?? '') ?>">
+                        <input type="hidden" name="_csrf" value="<?= htmlspecialchars($csrf) ?>">
                         <button type="submit" class="subnav-logout-btn" title="Sign out of your account">
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

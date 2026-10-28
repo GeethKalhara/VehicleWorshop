@@ -1,3 +1,7 @@
+import { start } from "@sneze/x-attributes";
+
+start();
+
 /**
  * Customer Layout TypeScript
  * Controls mobile drawer, sub-navbar interactions, and dropdowns.
