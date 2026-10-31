@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace Vwork\Web\Controllers;
 
-use Closure;
 use Vwork\Shared\Collections\IRegistry;
 use Vwork\Web\Http\Cookies\HttpCookies;
-use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Headers\ResponseHeaders;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Headers\RequestHeaders;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Utils\AssetParser;
 use Vwork\Web\Utils\CsrfToken;
 use Vwork\Web\Utils\View;
@@ -54,10 +51,11 @@ abstract readonly class ControllerBase implements IController
      * @param ?string $layout - wrapping view; must echo $content and $title.
      *     (null sends the template on its own)
      */
-    protected function view(Request $request, string $template, array $data = [], ?string $layout = null, HttpStatus $status = HttpStatus::Ok): Response
+    protected function view(Request $request, string $template, array $data = [], ?string $layout = null): string
     {
         // no session yet (login page) still gets a token; SameOriginMiddleware guards that case
-        $csrf = $this->csrf->create($request->cookies[HttpCookies::SessionToken] ?? '');
+        $csrf = $request->headers[RequestHeaders::XCsrfToken][0]
+            ?? $this->csrf->create($request->cookies[HttpCookies::SessionToken] ?? '');
 
         $html = $this->view->render($template, [
             ...$data,
@@ -75,48 +73,7 @@ abstract readonly class ControllerBase implements IController
             ]);
         }
 
-        return Response::html($html, $status);
-    }
-
-    /**
-     * Sends $data as JSON or CBOR, depending on Accept headers.
-     *
-     * @param array<string, mixed> $data
-     * @param list<string> $accept
-     */
-    protected function payload(array $data, array $accept, HttpStatus $status = HttpStatus::Ok): Response
-    {
-        return Response::json($data, $status);
-    }
-
-    /**
-     * Keeps the connection open and sends events as they happen.
-     *
-     * We hand $source a pen ($emit). Each time something happens, $source
-     * writes one event with it, and the event goes straight to the browser.
-     * The stream ends when $source returns.
-     *
-     * @param Closure(Closure(string $event, string $data): void $emit): void $source
-     */
-    protected function sse(Closure $source): Response
-    {
-        return Response::stream(
-            static function () use ($source): void {
-                $source(static function (string $event, string $data): void {
-                    echo "event: {$event}\n";
-                    foreach (explode("\n", $data) as $line) {
-                        echo "data: {$line}\n";
-                    }
-                    echo "\n";
-                    flush();
-                });
-            },
-            [
-                ResponseHeaders::ContentType->value => ['text/event-stream; charset=utf-8'],
-                ResponseHeaders::CacheControl->value => ['no-cache'],
-                ResponseHeaders::XAccelBuffering->value => ['no'],
-            ],
-        );
+        return $html;
     }
 
     // /**

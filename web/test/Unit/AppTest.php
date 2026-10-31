@@ -10,7 +10,7 @@ use ReflectionClass;
 use Vwork\Web\App;
 use Vwork\Web\Http\HttpMethods;
 use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Pipeline\ControllerHandler;
 use Vwork\Web\Router\RouterFactory;
 use Vwork\Web\Router\RouterTypes;

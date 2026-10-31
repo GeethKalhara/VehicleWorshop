@@ -6,8 +6,8 @@ namespace Vwork\Web\Test\Stubs;
 
 use Vwork\Web\Controllers\ControllerAction;
 use Vwork\Web\Controllers\IController;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * A controller for tests.
@@ -21,7 +21,7 @@ final readonly class ControllerStub implements IController
     #[ControllerAction]
     public function index(Request $request, array $attr): Response
     {
-        return Response::text('index');
+        return Response::single()->text('index');
     }
 
     // Each method below breaks exactly one ControllerAction rule.
@@ -29,20 +29,20 @@ final readonly class ControllerStub implements IController
     /** @param array<string, mixed> $attr */
     public function notMarked(Request $request, array $attr): Response
     {
-        return Response::text('');
+        return Response::single()->text('');
     }
 
     /** @param array<string, mixed> $attr */
     #[ControllerAction]
     protected function notPublic(Request $request, array $attr): Response
     {
-        return Response::text('');
+        return Response::single()->text('');
     }
 
     #[ControllerAction]
     public function wrongParams(Request $request): Response
     {
-        return Response::text('');
+        return Response::single()->text('');
     }
 
     /** @param array<string, mixed> $attr */

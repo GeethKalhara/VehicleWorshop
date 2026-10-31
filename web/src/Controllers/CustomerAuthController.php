@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Vwork\Web\Controllers;
 
 use Vwork\Shared\Collections\IRegistry;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * Handles Customer authentication flows (Login, Register, Logout).
@@ -38,12 +38,14 @@ final readonly class CustomerAuthController extends ControllerBase
 
     private function renderLogin(Request $req, ?string $error = null, ?string $success = null, string $mobile = ''): Response
     {
-        return $this->view($req, 'customer/login', [
+        $html = $this->view($req, 'customer/login', [
             'title'     => 'Sign In - AutoCare Customer Portal',
             'error'     => $error,
             'success'   => $success,
             'mobile'    => $mobile,
         ], 'layouts/auth');
+
+        return Response::single()->html($html);
     }
 
     /**
@@ -67,11 +69,13 @@ final readonly class CustomerAuthController extends ControllerBase
      */
     private function renderRegister(Request $req, ?string $error = null, ?string $success = null, array $old = []): Response
     {
-        return $this->view($req, 'customer/register', [
+        $html = $this->view($req, 'customer/register', [
             'title'   => 'Create Account - AutoCare Customer Portal',
             'error'   => $error,
             'success' => $success,
             'old' => $old + array_fill_keys(['first_name', 'last_name', 'mobile', 'email'], ''),
         ], 'layouts/auth');
+
+        return Response::single()->html($html);
     }
 }

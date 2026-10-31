@@ -6,8 +6,8 @@ namespace Vwork\Web\Middleware;
 
 use Vwork\Shared\Collections\IRegistry;
 use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 use Vwork\Web\Middleware\IMiddleware;
 use Vwork\Web\Utils\View;
 
@@ -31,14 +31,12 @@ abstract readonly class MiddlewareBase implements IMiddleware
     /**
      * Ends the chain here: the controller never runs.
      */
-    protected function deny(Request $request, string $message, HttpStatus $status): Response
+    protected function deny(Request $request, string $message, HttpStatus $status): string
     {
-        $html = $this->view->render('layout/error', [
+        return $this->view->render('layout/error', [
             'title' => "{$status->value} {$status->description()}",
             'path' => "{$request->method->value} {$request->path}",
             'message' => $message,
         ]);
-
-        return Response::html($html, $status);
     }
 }

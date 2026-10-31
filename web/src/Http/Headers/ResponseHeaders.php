@@ -22,7 +22,9 @@ enum ResponseHeaders: string implements HttpHeader
     case ContentType = 'Content-Type';
     case Location = 'Location';
     case Vary = 'Vary';
+
     case XAccelBuffering = 'X-Accel-Buffering';
+    case XAttrRedirect = 'X-Attr-Redirect';
 
     /**
      * List headers are appended to; everything else is replaced.
@@ -37,7 +39,8 @@ enum ResponseHeaders: string implements HttpHeader
             self::ContentLength,
             self::ContentType,
             self::Location,
-            self::XAccelBuffering => false,
+            self::XAccelBuffering,
+            self::XAttrRedirect => false,
         };
     }
 }

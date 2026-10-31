@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Vwork\Web\Pipeline;
 
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * One stop on the way from the router to the controller.

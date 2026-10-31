@@ -11,7 +11,9 @@ use PHPUnit\Framework\TestCase;
 use Vwork\Shared\Collections\ImmutableRegistry;
 use Vwork\Shared\Collections\IRegistry;
 use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Pipeline\IPipelineHandler;
+use Vwork\Web\Pipeline\PipelineContext;
 use Vwork\Web\Test\Stubs\MiddlewareBaseStub;
 use Vwork\Web\Utils\IUtility;
 use Vwork\Web\Utils\View;
@@ -52,18 +54,6 @@ final class MiddlewareBaseTest extends TestCase
     }
 
     #[Test]
-    #[TestWith([HttpStatus::Unauthorized])]
-    #[TestWith([HttpStatus::Forbidden])]
-    #[TestWith([HttpStatus::NotFound])]
-    public function deny_answers_with_the_given_status_as_html(HttpStatus $status): void
-    {
-        $response = self::stub()->callDeny(self::request('GET', '/jobs'), 'nope', $status);
-
-        $this->assertSame($status, $response->status);
-        $this->assertSame(['Content-Type' => ['text/html; charset=utf-8']], $response->headers->list);
-    }
-
-    #[Test]
     #[TestWith(['GET', '/jobs/42', 'Not yours', HttpStatus::Forbidden])]
     #[TestWith(['POST', '/auth/login?next=/jobs', 'Bad token', HttpStatus::Forbidden])] // query dropped
     #[TestWith(['DELETE', '/', '', HttpStatus::Unauthorized])]
@@ -73,18 +63,19 @@ final class MiddlewareBaseTest extends TestCase
         string $message,
         HttpStatus $status,
     ): void {
-        $response = self::stub()->callDeny(self::request($method, $uri), $message, $status);
+        $html = self::stub()->callDeny(self::request($method, $uri), $message, $status);
         $path = explode('?', $uri, 2)[0];
 
-        $this->expectOutputString("{$status->value} {$status->description()}|{$method} {$path}|{$message}");
-        $response->send(true);
+        $this->assertSame("{$status->value} {$status->description()}|{$method} {$path}|{$message}", $html);
     }
 
     #[Test]
-    public function deny_leaves_no_cookies_behind(): void
+    public function handle_can_wrap_deny_in_an_html_response(): void
     {
-        $response = self::stub()->callDeny(self::request('GET', '/'), 'nope', HttpStatus::Forbidden);
+        $request = self::request('GET', '/jobs');
+        $response = self::stub()->handle($request, [], $this->createStub(IPipelineHandler::class), new PipelineContext(roles: 'admin'));
 
-        $this->assertSame([], $response->cookies->list);
+        $this->assertSame(HttpStatus::Forbidden, $response->status);
+        $this->assertSame(['Content-Type' => ['text/html; charset=utf-8']], $response->headers->list);
     }
 }

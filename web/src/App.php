@@ -7,8 +7,8 @@ namespace Vwork\Web;
 use Vwork\Web\Http\Headers\ResponseHeaders;
 use Vwork\Web\Http\HttpMethods;
 use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 use Vwork\Web\Router\IRouter;
 use Vwork\Web\Router\RouteMatchStatus;
 
@@ -44,17 +44,17 @@ final readonly class App
 
         // OPTIONS returns the available methods for a specific route
         if ($request->method === HttpMethods::OPTIONS) {
-            return Response::make(
-                '',
-                [ResponseHeaders::Allow->value => array_map(static fn (HttpMethods $v): string => $v->value, $match->allowed)],
-                HttpStatus::Ok
-            );
+            assert($match->status === RouteMatchStatus::NotAllowed, 'OPTIONS methods are never wired in config');
+            return Response::single(
+                HttpStatus::Ok,
+                [ResponseHeaders::Allow->value => array_map(static fn (HttpMethods $v): string => $v->value, $match->allowed)]
+            )->empty();
         }
 
         return match ($match->status) {
             RouteMatchStatus::Found => ($match->handler ?? throw new WebError('Found route has no handler'))->handle($request, $match->params),
-            RouteMatchStatus::NotAllowed => Response::methodNotAllowed($match->allowed),
-            RouteMatchStatus::NotFound => Response::error(HttpStatus::NotFound),
+            RouteMatchStatus::NotAllowed => Response::single()->methodNotAllowed($match->allowed),
+            RouteMatchStatus::NotFound => Response::single(HttpStatus::NotFound)->error(),
         };
     }
 

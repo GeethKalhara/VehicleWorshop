@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Vwork\Web\Http;
+namespace Vwork\Web\Http\Response;
 
 use Closure;
 use Vwork\Shared\Collections\EnumList;
@@ -11,6 +11,7 @@ use Vwork\Web\Http\Cookies\HttpCookies;
 use Vwork\Web\Http\Cookies\CookieSitePolicies;
 use Vwork\Web\Http\Cookies\ResponseCookie;
 use Vwork\Web\Http\Headers\ResponseHeaders;
+use Vwork\Web\Http\HttpStatus;
 
 /**
  * What goes out.
@@ -20,6 +21,12 @@ use Vwork\Web\Http\Headers\ResponseHeaders;
  * push this particular response to the client, whatever shape that
  * takes: a plain page, a file download, or a long-lived SSE stream. The
  * rest of the app never has to ask which kind it's dealing with.
+ *
+ * Built through one of two entry points, picked by how the body is
+ * delivered:
+ *
+ *     Response::single(status, headers)->html($html)
+ *     Response::stream(status, headers)->json($events)
  *
  * @author Senira <senirahan@gmail.com>
  */
@@ -60,165 +67,40 @@ final class Response
     }
 
     /**
-     * What every named constructor below delegates to. Wraps $body in a
-     * closure that echoes it at send() time.
+     * @internal for SingleResponses / StreamResponses only; everything
+     * else goes through single() or stream().
      *
      * @param array<value-of<ResponseHeaders>, list<string>> $headers
+     * @param Closure(): void $sender
+     * @throws WebError if a header value is invalid
      */
-    public static function make(string $body, array $headers, HttpStatus $status): self
+    public static function build(HttpStatus $status, array $headers, Closure $sender): self
     {
-        return new self(
-            $status,
-            $headers,
-            static function () use ($body): void {
-                echo $body;
-            }
-        );
+        return new self($status, $headers, $sender);
     }
 
     /**
-     * Shortcut for HTML responses - sets all the correct headers
+     * Responses whose whole body is known up front (or that have none).
      *
-     * @param string $data - rendered HTML is to be sent from here as a string
+     * @param ?HttpStatus $status - null uses each method's default;
+     *     an explicit one is validated by the method
+     * @param array<value-of<ResponseHeaders>, list<string>> $headers - extra headers
      */
-    public static function html(string $data, HttpStatus $status = HttpStatus::Ok): self
+    public static function single(?HttpStatus $status = null, array $headers = []): SingleResponses
     {
-        return self::make(
-            $data,
-            [ResponseHeaders::ContentType->value => ['text/html; charset=utf-8']],
-            $status
-        );
+        return new SingleResponses($status, $headers);
     }
 
     /**
-     * Shortcut for simple TEXT responses - sets all the correct headers
+     * Responses whose body is produced over time: SSE and file downloads.
      *
-     * @param string $data - TEXT is to be sent from here
+     * @param ?HttpStatus $status - null uses each method's default;
+     *     an explicit one is validated by the method
+     * @param array<value-of<ResponseHeaders>, list<string>> $headers - extra headers
      */
-    public static function text(string $data, HttpStatus $status = HttpStatus::Ok): self
+    public static function stream(?HttpStatus $status = null, array $headers = []): StreamResponses
     {
-        return self::make(
-            $data,
-            [ResponseHeaders::ContentType->value => ['text/plain; charset=utf-8']],
-            $status
-        );
-    }
-
-    /**
-     * Shortcut to send $data as JSON. - sets all the correct headers
-     *
-     * @param array<string, mixed> $data - data
-     */
-    public static function json(array $data, HttpStatus $status = HttpStatus::Ok): self
-    {
-        return self::make(
-            json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_LINE_TERMINATORS),
-            [ResponseHeaders::ContentType->value => ['application/json; charset=utf-8']],
-            $status
-        );
-    }
-
-    // /**
-    //  * Shortcut to send $data as CBOR. - sets all the correct headers
-    //  *
-    //  * @param array<string, mixed> $data - data
-    //  */
-    // public static function cbor(array $data, HttpStatus $status = HttpStatus::Ok): self
-    // {
-    //     return self::make(
-    //         cbor_encode($data, CBOR_TEXT | CBOR_KEY_TEXT),
-    //         [ResponseHeaders::ContentType->value => ['application/cbor']],
-    //         $status
-    //     );
-    // }
-
-    /**
-     * For bodies that aren't one known string up front — SSE, chunked output.
-     *
-     * @param Closure(): void $emit - does all the writing itself; nothing here buffers it.
-     * @param array<value-of<ResponseHeaders>, list<string>> $headers
-     */
-    public static function stream(Closure $emit, array $headers): self
-    {
-        return new self(
-            HttpStatus::Ok,
-            $headers,
-            $emit
-        );
-    }
-
-    /**
-     * Sends a file from disk as a download.
-     *
-     * @throws WebError if the file isn't there or its size can't be read
-     */
-    public static function file(string $path, string $name): self
-    {
-        if (!is_file($path)) {
-            throw new WebError("Cannot send file, not found: {$path}");
-        }
-
-        $size = filesize($path);
-        if ($size === false) {
-            throw new WebError("Cannot determine size of file: {$path}");
-        }
-
-        $ascii = addcslashes(preg_replace('/[^\x20-\x7E]/', '_', $name) ?? 'download', '"\\');
-
-        return new self(
-            HttpStatus::Ok,
-            [
-                ResponseHeaders::ContentType->value => ['application/octet-stream'],
-                ResponseHeaders::ContentDisposition->value => [
-                    "attachment; filename=\"{$ascii}\"; filename*=UTF-8''" . rawurlencode($name),
-                ],
-                ResponseHeaders::ContentLength->value => [(string) $size],
-            ],
-            static function () use ($path): void {
-                readfile($path);
-            }
-        );
-    }
-
-    /**
-     * Shortcut for Request redirection
-     *
-     * @param string $path - redirect url
-     */
-    public static function redirect(string $path, HttpStatus $status = HttpStatus::Found): self
-    {
-        return self::make(
-            '',
-            [ResponseHeaders::Location->value => [$path]],
-            $status
-        );
-    }
-
-    /**
-     * @param list<HttpMethods> $allowed
-     */
-    public static function methodNotAllowed(array $allowed): self
-    {
-        return self::make(
-            '',
-            [ResponseHeaders::Allow->value => array_map(static fn (HttpMethods $v): string => $v->value, $allowed)],
-            HttpStatus::MethodNotAllowed
-        );
-    }
-
-    public static function noContent(): self
-    {
-        return self::make('', [], HttpStatus::NoContent);
-    }
-
-    /**
-     * Shortcut for sending many types of errors
-     *
-     * @param HttpStatus $status - the error Code
-     */
-    public static function error(HttpStatus $status, string $msg = ''): self
-    {
-        return self::text($msg, $status);
+        return new StreamResponses($status, $headers);
     }
 
     public function changeStatus(HttpStatus $status): self

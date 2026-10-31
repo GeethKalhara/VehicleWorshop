@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Vwork\Web\Http;
+namespace Vwork\Web\Http\Request;
 
 use RequestParseBodyException;
 use Vwork\Shared\Collections\EnumList;
@@ -11,6 +11,7 @@ use Vwork\Web\Http\Cookies\HttpCookies;
 use Vwork\Web\WebException;
 use Vwork\Web\Http\Headers\RequestHeaders;
 use Vwork\Web\WebError;
+use Vwork\Web\Http\HttpMethods;
 
 /**
  * What came in.

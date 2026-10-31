@@ -21,6 +21,8 @@ enum RequestHeaders: string implements HttpHeader
     case Origin = 'Origin';
     case SecFetchSite = 'Sec-Fetch-Site';
     case UserAgent = 'User-Agent';
+
+    case XAttrRequest = 'X-Attr-Request';
     case XCsrfToken = 'X-CSRF-Token';
 
     /**
@@ -39,6 +41,7 @@ enum RequestHeaders: string implements HttpHeader
             self::Origin,
             self::SecFetchSite,
             self::UserAgent,
+            self::XAttrRequest,
             self::XCsrfToken => false,
         };
     }

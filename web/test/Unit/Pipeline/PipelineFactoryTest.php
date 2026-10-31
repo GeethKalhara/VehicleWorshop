@@ -10,7 +10,7 @@ use ReflectionClass;
 use Vwork\Shared\Collections\ImmutableRegistry;
 use Vwork\Web\Controllers\IController;
 use Vwork\Web\Http\HttpMethods;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Middleware\IMiddleware;
 use Vwork\Web\Pipeline\ControllerHandler;
 use Vwork\Web\Pipeline\IPipelineHandler;

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Vwork\Web\Controllers;
 
 use Vwork\Shared\Collections\IRegistry;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * Handles Customer Dashboard flows.
@@ -28,7 +28,7 @@ final readonly class CustomerDashboardController extends ControllerBase
     #[ControllerAction]
     public function overviewPage(Request $req, array $attr): Response
     {
-        return $this->view($req, 'customer/dashboard', [
+        $html = $this->view($req, 'customer/dashboard', [
             'title'        => 'Overview - AutoCare Customer Portal',
             'active_route' => 'overview',
             'user'         => null,
@@ -36,5 +36,7 @@ final readonly class CustomerDashboardController extends ControllerBase
             'current_service' => null,
             'recent_activity' => [],
         ], 'layouts/customer');
+
+        return Response::single()->html($html);
     }
 }

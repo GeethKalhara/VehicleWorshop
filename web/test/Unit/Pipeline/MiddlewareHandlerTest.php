@@ -7,7 +7,7 @@ namespace Vwork\Web\Test\Unit\Pipeline;
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Pipeline\ControllerHandler;
 use Vwork\Web\Pipeline\MiddlewareHandler;
 use Vwork\Web\Pipeline\PipelineContext;

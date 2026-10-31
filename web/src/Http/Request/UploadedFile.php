@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Vwork\Web\Http;
+namespace Vwork\Web\Http\Request;
 
 /**
  * One uploaded file, lifted out of PHP's $_FILES representation.

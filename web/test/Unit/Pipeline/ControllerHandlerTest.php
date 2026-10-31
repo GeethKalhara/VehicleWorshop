@@ -8,7 +8,7 @@ use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Vwork\Web\Controllers\ControllerError;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Pipeline\ControllerHandler;
 use Vwork\Web\Test\Stubs\ControllerStub;
 

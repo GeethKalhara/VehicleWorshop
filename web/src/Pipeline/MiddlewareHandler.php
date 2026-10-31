@@ -6,8 +6,8 @@ namespace Vwork\Web\Pipeline;
 
 use Override;
 use Vwork\Web\Middleware\IMiddleware;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * A middle stop. It holds one middleware and the stop after it.

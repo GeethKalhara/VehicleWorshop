@@ -8,8 +8,8 @@ use Attribute;
 use ReflectionMethod;
 use ReflectionNamedType;
 use ReflectionType;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * Marks a controller method as a route target.

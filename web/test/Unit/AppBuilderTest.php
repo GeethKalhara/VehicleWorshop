@@ -10,7 +10,7 @@ use ReflectionClass;
 use Vwork\Shared\Exception\VworkError;
 use Vwork\Web\AppBuilder;
 use Vwork\Web\Http\HttpMethods;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Middleware\IMiddleware;
 use Vwork\Web\Router\RouterTypes;
 use Vwork\Web\Test\Stubs\ControllerStub;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Vwork\Web\Middleware;
 
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 use Vwork\Web\Pipeline\IPipelineHandler;
 use Vwork\Web\Pipeline\PipelineContext;
 

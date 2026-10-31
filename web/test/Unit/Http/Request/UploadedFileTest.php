@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Vwork\Web\Test\Unit\Http;
+namespace Vwork\Web\Test\Unit\Http\Request;
 
 use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\Attributes\TestWith;
 use PHPUnit\Framework\TestCase;
-use Vwork\Web\Http\UploadedFile;
+use Vwork\Web\Http\Request\UploadedFile;
 
 final class UploadedFileTest extends TestCase
 {

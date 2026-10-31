@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Vwork\Web\Controllers;
 
 use Closure;
+use Generator;
 use Vwork\Shared\Collections\IRegistry;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * A sample controller: proves a request can travel from the router,
@@ -28,44 +29,49 @@ final readonly class DummyController extends ControllerBase
     #[ControllerAction]
     public function hello(Request $req, array $attr): Response
     {
-        return Response::text('Hello');
+        return Response::single()->text('Hello');
     }
 
     /** @param StringMap $attr */
     #[ControllerAction]
     public function dummy(Request $req, array $attr): Response
     {
-        $data = [
+        $html = $this->view($req, 'dummy/dummy', [
             'title' => 'Dummy Page',
             'message' => 'Hello Sailor!'
-        ];
-        return $this->view($req, 'dummy/dummy', $data, 'layouts/blank');
+        ], 'layouts/blank');
+
+        return Response::single()->html($html);
     }
 
     /** @param StringMap $attr */
     #[ControllerAction]
     public function dummyhello(Request $req, array $attr): Response
     {
-        $data = [
+        $html = $this->view($req, 'dummy/hello', $data = [
             'message' => 'Hello Sailor!'
-        ];
-        return $this->view($req, 'dummy/hello', $data);
+        ]);
+
+        return Response::single()->html($html);
     }
 
     /** @param StringMap $attr */
     #[ControllerAction]
     public function greeting(Request $req, array $attr): Response
     {
-        $render = fn (string $message) => $this->view->render('dummy/greeting', [ 'message' => $message ]);
-        return self::sse(static function (Closure $emit) use ($render): void {
+        $view = $this->view;
+
+        /** @return Generator<string, string> */
+        $render = static function () use ($view): Generator {
             while (connection_aborted() === 0) {
-                $token = bin2hex(random_bytes(8));
-                $emit(
-                    'dummy:event',
-                    $render($token)
-                );
+                yield 'dummy:event' => $view->render('dummy/greeting', [
+                    'message' => bin2hex(random_bytes(8))
+                ]);
+
                 sleep(2);
             }
-        });
+        };
+
+        return Response::stream()->html($render());
     }
 }

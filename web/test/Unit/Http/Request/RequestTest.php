@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Vwork\Web\Test\Unit\Http;
+namespace Vwork\Web\Test\Unit\Http\Request;
 
 use Override;
 use PHPUnit\Framework\Attributes\Test;
@@ -12,7 +12,7 @@ use Vwork\Shared\Exception\VworkError;
 use Vwork\Web\Http\Cookies\HttpCookies;
 use Vwork\Web\Http\Headers\RequestHeaders;
 use Vwork\Web\Http\HttpMethods;
-use Vwork\Web\Http\Request;
+use Vwork\Web\Http\Request\Request;
 use Vwork\Web\Test\Mocks\MockInputStream;
 use Vwork\Web\WebException;
 

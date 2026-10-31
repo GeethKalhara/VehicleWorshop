@@ -6,8 +6,8 @@ namespace Vwork\Web\Test\Stubs;
 
 use Override;
 use Vwork\Web\Http\HttpStatus;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 use Vwork\Web\Middleware\IMiddleware;
 use Vwork\Web\Pipeline\IPipelineHandler;
 use Vwork\Web\Pipeline\PipelineContext;
@@ -25,6 +25,6 @@ final class DenyMiddlewareStub implements IMiddleware
     public function handle(Request $request, array $attr, IPipelineHandler $next, PipelineContext $ctx): Response
     {
         $this->got = [$request, $attr, $next, $ctx];
-        return Response::error(HttpStatus::Unauthorized);
+        return Response::single(HttpStatus::Unauthorized)->error();
     }
 }

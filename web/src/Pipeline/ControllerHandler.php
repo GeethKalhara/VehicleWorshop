@@ -8,8 +8,8 @@ use Override;
 use Vwork\Web\Controllers\ControllerAction;
 use Vwork\Web\Controllers\ControllerError;
 use Vwork\Web\Controllers\IController;
-use Vwork\Web\Http\Request;
-use Vwork\Web\Http\Response;
+use Vwork\Web\Http\Request\Request;
+use Vwork\Web\Http\Response\Response;
 
 /**
  * The last stop. Every middleware has said yes, so now we call one

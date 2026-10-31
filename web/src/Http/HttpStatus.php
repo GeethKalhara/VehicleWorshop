@@ -14,9 +14,11 @@ enum HttpStatus: int
     case Ok = 200;
     case Created = 201;
     case NoContent = 204;
+    case PartialContent = 206;
 
     case Found = 302;
     case SeeOther = 303;
+    case NotModified = 304;
 
     case BadRequest = 400;
     case Unauthorized = 401;
@@ -48,6 +50,8 @@ enum HttpStatus: int
             self::UnprocessableEntity => 'Unprocessable Entity',
             self::InternalServerError => 'Internal Server Error',
             self::ServiceUnavailable => 'Service Unavailable',
+            self::NotModified => 'Not Modified',
+            self::PartialContent => 'Partial Content',
         };
     }
 }
