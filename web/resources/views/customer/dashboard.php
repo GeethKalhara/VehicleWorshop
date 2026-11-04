@@ -31,6 +31,7 @@
  *     color_hex?: string,
  *     status: 'active_service'|'idle',
  *     bay_status_label?: string
+ * }> $vehicles
  */
 
 $escape = static fn (string|int|float|null $value): string => htmlspecialchars(
